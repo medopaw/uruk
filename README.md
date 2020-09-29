@@ -16,27 +16,42 @@ cd uruk
 
 ## Install Dev Tools Using Uruk
 
-You can install python in one line.
+You can install all things your need in just one line.
 
 ```bash
-make install python
+make install
 ```
 
-You can also configure multiple tools in `default.conf` like this:
+Before doing that, you need to configure multiple tools in `custom.conf` like this:
 
 ```
 python
 ruby
 ```
 
-And run
+or
+
+```
+python ruby
+```
+
+And then run
 ```bash
 make install
 ```
 
 and both python and ruby will be installed.
 
-If no `default.conf` was found, uruk will ask you to choose from all available tools.
+If no `custom.conf` was found, Uruk will read from `default.conf`.
+
+### Run install.sh directly
+
+Though not recommended, you can also run `install.sh` and specify things to install in command-line.
+
+```bash
+chmod +x install.sh
+./install.sh python ruby
+```
 
 ## Config
 
@@ -60,5 +75,4 @@ For each name retrieved in step 1 or 2, Uruk will try to resolve it and run spec
 
 1. If `python.sh` exists under current directory, then it will be run.
 2. Otherwise, Uruk will look into a folder named `python`. If such folder doesn't exist, Uruk will list all folders and `.sh` files and ask you to choose.
-3. Uruk will first check  `python/custom.conf` or `python/default.conf` and retrieve name(s) from it and repeat the process.
-4. If  `python/custom.conf` or `python/default.conf` doesn't exist, Uruk will try to run `python/install.conf`. If failed, you need to choose.
+3. Uruk will try to run `python/install.sh`. If failed, a message will be printed to ask you to specify target(s).

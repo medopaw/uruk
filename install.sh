@@ -69,14 +69,6 @@ install_one() {
         . "$current_dir/$1.sh"
         return
     fi
-    # 暂时不考虑子目录递归，因为子目录下改变 target 之后，is_installed 就无效了
-    # if [ -d "$current_dir/$1" ]
-    # then
-        # original_dir=$current_dir
-        # current_dir=$current_dir/$1
-        # install_all $1
-        # current_dir=$original_dir
-    # fi
 }
 
 current_dir=$PWD
