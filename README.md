@@ -63,16 +63,6 @@ And `custom.conf` is in `.gitignore`, so that you can keep your own configuratio
 
 Of course you can edit `default.conf` directly and include changes and submit to git commit and share with other developers.
 
-## Known Issues
-
-### Source rc/profile During Installation
-
-Sometimes we need to source rc/profile during installation. Right now Uruk can't handle this correctly.
-
-e.g. After `rbenv init`, reloading is needed. For now we need to install rbenv and then install ruby separately, otherwise `rbenv` won't be found when installing ruby.
-
-In `custom.conf` you should write `rbenv ruby` instead of `ruby` to avoid this.
-
 ## Under the Hood
 
 For every install target (i.e. python, ruby), Uruk decides which install script(s) should be run first by retrieving name(s) from:

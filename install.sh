@@ -4,6 +4,24 @@ add_execution_permission() {
     chmod +x "$1"
 }
 
+source_profile() {
+    if [ -f "$HOME/.zshrc" ]
+    then
+        . "$HOME/.zshrc"
+        return
+    fi
+    if [ -f "$HOME/.bash_profile" ]
+    then
+        . "$HOME/.bash_profile"
+        return
+    fi
+    if [ -f "$HOME/.bashrc" ]
+    then
+        . "$HOME/.bashrc"
+        return
+    fi
+}
+
 is_installed() {
     if command -v "$1" >/dev/null 2>&1
     then
