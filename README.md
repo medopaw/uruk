@@ -116,7 +116,7 @@ For each name retrieved in step 1 or 2, Uruk will try to resolve it and run spec
 1. If `python/is_installed.sh` exists, use its returned value (`true` or `0` means installed, otherwise not installed)
 2. Run `command -v python` to check if `python` is installed
 
-### Install the targeted
+### Install one target
 
 1. Uruk will try to run `python/install.sh`.
 2. If `python/install.sh` does not exist, Uruk will try to run `python.sh` under current directory instead.
