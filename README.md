@@ -10,11 +10,11 @@ Notice that it only works on macOS for now.
 
 ## Install Uruk
 
-0. Open your terminal.
-1. `git clone git@github.com:medopaw/uruk.git` or download https://github.com/medopaw/uruk/archive/master.zip and extract to lcoal directory.
-2. Enter `uruk` directory.
-3. Run `make install`.
-4. If a popup update window appears and ask you to install xcode-select command line developer tools, click "Install" and wait till it finishes.
+``````bash
+git clone git@github.com:medopaw/uruk.git
+```
+
+Or download https://github.com/medopaw/uruk/archive/master.zip and extract to lcoal directory.
 
 ## Install Dev Tools Using Uruk
 
@@ -30,7 +30,9 @@ And then you can install all things your need in just one line.
 make install
 ```
 
-By default, this will install python and ruby if nothing modified.
+If a popup update window appears and ask you to install xcode-select command line developer tools, click "Install" and wait till it finishes.
+
+By default, this will install git (brew version), python (pyenv version) and ruby (rbenv version) if nothing modified.
 
 ## Customization
 
