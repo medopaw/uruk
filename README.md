@@ -11,7 +11,7 @@ Notice that it only works on macOS for now.
 ## Install Uruk
 
 ```bash
-git clone git@github.com:medopaw/uruk.git
+git clone https://github.com/medopaw/uruk.git
 ```
 
 Or download https://github.com/medopaw/uruk/archive/master.zip and extract to lcoal directory.
@@ -21,7 +21,7 @@ Or download https://github.com/medopaw/uruk/archive/master.zip and extract to lc
 First enter Uruk directory.
 
 ```bash
-cd uruk
+cd uruk # Or `cd uruk-master` if it's extracted from github zip file
 ```
 
 And then you can install all things your need in just one line.
