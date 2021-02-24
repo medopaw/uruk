@@ -10,7 +10,7 @@ Notice that it only works on macOS for now.
 
 ## Install Uruk
 
-``````bash
+```bash
 git clone git@github.com:medopaw/uruk.git
 ```
 
