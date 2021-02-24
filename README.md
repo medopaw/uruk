@@ -72,6 +72,8 @@ Uruk use `command -v` to check if a target is installed. You can specify differe
 
 You should always call `return` in `is_installed.sh` at the end of execution. Otherwise there may be wrong results.
 
+Both `true`/`false` and `0`/`1` are valid return values.
+
 Often a customized `is_installed` is needed if you want to use `brew` or other installed version instead of system default version.
 
 ### Run install.sh directly
@@ -118,4 +120,4 @@ For each name retrieved in step 1 or 2, Uruk will try to resolve it and run spec
 
 1. Uruk will try to run `python/install.sh`.
 2. If `python/install.sh` does not exist, Uruk will try to run `python.sh` under current directory instead.
-3. If `python.sh` does not exist either, a message will be printed to ask you to specify target(s).
+3. If `python.sh` does not exist either, a message will appear, telling you Uruk can't locate any install script.

@@ -18,9 +18,11 @@ add_execution_permission() {
 }
 
 is_installed() {
-    if [ -f "$current_dir/$1/is_installed.sh" ]
+    script_path=$current_dir/$1/is_installed.sh
+    if [ -f "$script_path" ]
     then
-        if source_script "$1"
+        add_execution_permission "$script_path"
+        if source_script "$script_path"
             true
             return
         else
@@ -81,20 +83,20 @@ install_one() {
     # `python/install.sh` > `python.sh`
     if [ -f "$current_dir/$1/install.sh" ]
     then
-        echo Installing "$1"...
-        add_execution_permission "$1.sh"
-        source_script "$current_dir/$1/install.sh"
-        return
+        script_path=$current_dir/$1/install.sh
+    else
+        if [ -f "$current_dir/$1.sh" ]
+        then
+            script_path=$current_dir/$1.sh
+        else
+            echo "Can't locate $current_dir/$1/install.sh or $current_dir/$1.sh"
+            return
+        fi
     fi
-    if [ -f "$current_dir/$1.sh" ]
-    then
-        echo Installing "$1"...
-        add_execution_permission "$1.sh"
-        source_script "$current_dir/$1.sh"
-        return
-    fi
+    echo Installing "$1"...
+    add_execution_permission "$script_path"
+    source_script "$script_path"
 }
 
 current_dir=$PWD
 install_all "$@"
-
