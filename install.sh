@@ -1,5 +1,9 @@
 #!/bin/sh
 
+function_exists() {
+    LC_ALL=C type $1 | grep -q 'shell function'
+}
+
 add_execution_permission() {
     chmod +x "$1"
 }
@@ -23,13 +27,23 @@ source_profile() {
 }
 
 is_installed() {
-    if command -v "$1" >/dev/null 2>&1
+    if function_exists "is_$1_installed"
     then
-        true
-        return
+        if is_$1_installed
+            true
+            return
+        else
+            false
+            return
     else
-        false
-        return
+        if command -v "$1" >/dev/null 2>&1
+        then
+            true
+            return
+        else
+            false
+            return
+        fi
     fi
 }
 
