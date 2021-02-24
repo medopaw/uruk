@@ -23,11 +23,13 @@ is_installed() {
     then
         add_execution_permission "$script_path"
         if source_script "$script_path"
+        then
             true
             return
         else
             false
             return
+        fi
     else
         if command -v "$1" >/dev/null 2>&1
         then
