@@ -98,6 +98,11 @@ install_one() {
     echo Installing "$1"...
     add_execution_permission "$script_path"
     source_script "$script_path"
+    exit_code=$?
+    if [ $exit_code -ne 0 ]
+    then
+        exit $exit_code
+    fi
 }
 
 current_dir=$PWD
