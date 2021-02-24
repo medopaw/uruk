@@ -1,35 +1,26 @@
 #!/bin/sh
 
-function_exists() {
-    LC_ALL=C type $1 | grep -q 'shell function'
+# Returns true or false
+source_script() {
+    . "$1"
+    if [ $? -eq 0 ]
+    then
+        true
+        return
+    else
+        false
+        return
+    fi
 }
 
 add_execution_permission() {
     chmod +x "$1"
 }
 
-source_profile() {
-    if [ -f "$HOME/.zshrc" ]
-    then
-        . "$HOME/.zshrc"
-        return
-    fi
-    if [ -f "$HOME/.bash_profile" ]
-    then
-        . "$HOME/.bash_profile"
-        return
-    fi
-    if [ -f "$HOME/.bashrc" ]
-    then
-        . "$HOME/.bashrc"
-        return
-    fi
-}
-
 is_installed() {
-    if function_exists "is_$1_installed"
+    if [ -f "$current_dir/$1/is_installed.sh" ]
     then
-        if is_$1_installed
+        if source_script "$1"
             true
             return
         else
@@ -87,18 +78,19 @@ install_one() {
         echo Nothing to install.
         return
     fi
-    if [ -f "$current_dir/$1.sh" ]
-    then
-        echo Installing "$1"...
-        add_execution_permission "$1.sh"
-        . "$current_dir/$1.sh"
-        return
-    fi
+    # `python/install.sh` > `python.sh`
     if [ -f "$current_dir/$1/install.sh" ]
     then
         echo Installing "$1"...
         add_execution_permission "$1.sh"
-        . "$current_dir/$1.sh"
+        source_script "$current_dir/$1/install.sh"
+        return
+    fi
+    if [ -f "$current_dir/$1.sh" ]
+    then
+        echo Installing "$1"...
+        add_execution_permission "$1.sh"
+        source_script "$current_dir/$1.sh"
         return
     fi
 }
