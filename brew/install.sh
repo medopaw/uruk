@@ -14,5 +14,9 @@ fi
 # If failed, run local pre-downloaded script
 if ! is_installed brew
 then
+    # First clone brew-cask from faster source in China to save time
+    cask_dir=/usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask
+    mkdir -p "$cask_dir"
+    git clone https://mirrors.ustc.edu.cn/homebrew-cask.git "cask_dir"
     /bin/bash brew/brew.sh
 fi
