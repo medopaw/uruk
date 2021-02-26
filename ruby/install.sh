@@ -2,7 +2,7 @@
 
 install_if_needed rbenv
 install_if_needed fzf
-echo "Please choose ruby version to install:"
+echo "Please choose ruby version to install. Enter to continue:"
 read
 ruby_version=`rbenv install -l | fzf`
 echo "Installing ruby $ruby_version now..."
