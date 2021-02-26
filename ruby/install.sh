@@ -2,6 +2,9 @@
 
 install_if_needed rbenv
 install_if_needed fzf
-latest_ruby_version=`rbenv install -l | fzf`
-rbenv install "$latest_ruby_version"
-rbenv global "$latest_ruby_version"
+echo "Please choose ruby version to install:"
+read
+ruby_version=`rbenv install -l | fzf`
+echo "Installing ruby $ruby_version now..."
+rbenv install "$ruby_version"
+rbenv global "$ruby_version"
