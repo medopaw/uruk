@@ -13,6 +13,24 @@ source_script() {
     fi
 }
 
+source_profile() {
+    if [ -f "$HOME/.zshrc" ]
+    then
+        . "$HOME/.zshrc"
+        return
+    fi
+    if [ -f "$HOME/.bash_profile" ]
+    then
+        . "$HOME/.bash_profile"
+        return
+    fi
+    if [ -f "$HOME/.bashrc" ]
+    then
+        . "$HOME/.bashrc"
+        return
+    fi
+}
+
 add_execution_permission() {
     chmod +x "$1"
 }
