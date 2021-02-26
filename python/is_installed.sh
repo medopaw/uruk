@@ -2,7 +2,7 @@
 
 if is_installed pyenv
 then
-    pyenv version | grep -q .pyenv
+    command -v python | grep -q .pyenv
     return
 else
     false
