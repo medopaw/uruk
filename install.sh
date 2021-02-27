@@ -1,7 +1,6 @@
 #!/bin/sh
 
-# Returns true or false
-source_script() {
+source_script() { # Returns true or false
     . "$1"
     if [ $? -eq 0 ]; then
         true
@@ -17,7 +16,11 @@ source_profile() {
 }
 
 append_to_profile_if_needed() {
-    if ! grep -q "$1" "$shell_profile"; then
+    if [ -r "$shell_profile" ]; then
+        if ! grep -q "$1" "$shell_profile"; then
+            echo "$1" >> "$shell_profile"
+        fi
+    else
         echo "$1" >> "$shell_profile"
     fi
 }
@@ -58,16 +61,16 @@ install_if_needed() {
 
 install_all() {
     all_targets=$*
-    if [ -z "$all_targets" ]; then # 没有参数
-        if [ -r "$current_dir/custom.conf" ]; then # 读取 custom.conf
+    if [ -z "$all_targets" ]; then # No arguments
+        if [ -r "$current_dir/custom.conf" ]; then # Read custom.conf
             all_targets=$(cat "$current_dir/custom.conf")
         else
-            if [ -r "$current_dir/default.conf" ]; then # 读取 default.conf
+            if [ -r "$current_dir/default.conf" ]; then # Read default.conf
                 all_targets=$(cat "$current_dir/default.conf")
             fi
         fi
     fi
-    if [ -z "$all_targets" ]; then # 仍然没有参数
+    if [ -z "$all_targets" ]; then # Still no arguments
         echo "Please specify target(s) to install."
         return
     fi
