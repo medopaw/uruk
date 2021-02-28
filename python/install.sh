@@ -10,3 +10,4 @@ python_version=`pyenv install -l | fzf | tr -d ' '`
 echo "Installing python $python_version now..."
 pyenv install "$python_version"
 pyenv global "$python_version"
+source_profile
