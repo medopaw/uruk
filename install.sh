@@ -29,6 +29,17 @@ add_execution_permission() {
     chmod +x "$1"
 }
 
+is_installed_by_brew() {
+    install_if_needed brew
+    brew list "$1" &>/dev/null
+    return
+}
+
+install_with_brew() {
+    install_if_needed brew
+    brew install "$1"
+}
+
 is_installed() {
     script_path=$current_dir/$1/is_installed.sh
     if [ -r "$script_path" ]; then

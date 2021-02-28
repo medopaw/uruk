@@ -1,4 +1,3 @@
 #!/bin/sh
 
-install_if_needed brew
-brew install tldr
+install_with_brew tldr
