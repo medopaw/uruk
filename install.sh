@@ -31,8 +31,13 @@ add_execution_permission() {
 
 is_installed_by_brew() {
     install_if_needed brew
-    brew list "$1" &>/dev/null
-    return
+    if brew list "$1" &>/dev/null; then
+        true
+        return
+    else
+        false
+        return
+    fi
 }
 
 install_with_brew() {
