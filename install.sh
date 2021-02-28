@@ -117,4 +117,13 @@ case "$SHELL" in
     fi
     ;;
 esac
+needs_source_profile=false
 install_all "$@"
+if [ $? -eq 0 ]; then
+    echo "Installation complete."
+    if $needs_source_profile; then
+        echo
+        echo "Please type following commands into terminal and press Enter:"
+        echo "source $shell_profile"
+    fi
+fi

@@ -8,4 +8,4 @@ ruby_version=`rbenv install -l | fzf | tr -d ' '`
 echo "Installing ruby $ruby_version now..."
 rbenv install "$ruby_version"
 rbenv global "$ruby_version"
-eval "$(rbenv init -)"
+needs_source_profile=true
