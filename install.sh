@@ -29,6 +29,16 @@ add_execution_permission() {
     chmod +x "$1"
 }
 
+exists_in_application_folder() {
+    if [ -d "/Applications/$1.app" ]; then
+        true
+        return
+    else
+        false
+        return
+    fi
+}
+
 is_installed_by_brew() {
     install_if_needed brew
     brew list "$1" &>/dev/null
