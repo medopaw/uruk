@@ -2,11 +2,6 @@
 
 source_script() { # Returns true or false
     . "$1"
-    if [ $? -eq 0 ]; then
-        true
-    else
-        false
-    fi
 }
 
 source_profile() {
