@@ -141,7 +141,7 @@ install_one() {
             script_path=$current_dir/$1.sh
         fi
     fi
-    if [ -z "$script_path" ]; then # Execute script if found
+    if [ ! -z "$script_path" ]; then # Execute script if found
         echo Installing "$1"...
         add_execution_permission "$script_path"
         source_script "$script_path" || exit $? # Exit on installation error
