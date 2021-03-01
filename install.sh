@@ -4,10 +4,8 @@ source_script() { # Returns true or false
     . "$1"
     if [ $? -eq 0 ]; then
         true
-        return
     else
         false
-        return
     fi
 }
 
@@ -32,43 +30,35 @@ add_execution_permission() {
 exists_in_application_folder() {
     if [ -d "/Applications/$1.app" ]; then
         true
-        return
     else
         false
-        return
     fi
 }
 
 is_brew_target() {
     if [ -r "$current_dir/targets/$1.brewtarget" ]; then
         true
-        return
     else
         false
-        return
     fi
 }
 
 is_cask_target() {
     if [ -r "$current_dir/targets/$1.casktarget" ]; then
         true
-        return
     else
         false
-        return
     fi
 }
 
 is_installed_by_brew() {
     install_if_needed brew
     brew list "$1" &>/dev/null
-    return
 }
 
 is_cask_installed_by_brew() {
     install_if_needed brew
     brew list --cask "$1" &>/dev/null
-    return
 }
 
 install_with_brew() {
@@ -96,7 +86,6 @@ is_installed() {
     fi
     # Check if command exists
     command -v "$1" >/dev/null 2>&1
-    return
 }
 
 install_if_needed() {
@@ -119,8 +108,8 @@ install_all() {
         fi
     fi
     if [ -z "$all_targets" ]; then # Still no arguments
-        echo "Please specify target(s) to install."
-        return
+        echo Error: Please specify target(s) to install.
+        return 1
     fi
     for target in $all_targets
     do
@@ -130,32 +119,33 @@ install_all() {
 
 install_one() {
     if [ -z "$1" ]; then
-        echo Nothing to install.
-        return
+        echo Error: Nothing to install.
+        return 1
     fi
-    # `python/install.sh` > `python.sh`
     if [ -r "$current_dir/targets/$1/install.sh" ]; then
-        script_path=$current_dir/targets/$1/install.sh
-    else
-        if [ -r "$current_dir/targets/$1.sh" ]; then
-            script_path=$current_dir/targets/$1.sh
-        fi
-    fi
-    if [ ! -z "$script_path" ]; then # Execute script if found
+        script_path="$current_dir/targets/$1/install.sh"
         echo Installing "$1"...
         add_execution_permission "$script_path"
-        source_script "$script_path" || exit $? # Exit on installation error
+        source_script "$script_path" || exit # Exit on installation error
+        return
+    fi
+    if [ -r "$current_dir/targets/$1.sh" ]; then
+        script_path="$current_dir/targets/$1.sh"
+        echo Installing "$1"...
+        add_execution_permission "$script_path"
+        source_script "$script_path" || exit # Exit on installation error
         return
     fi
     # Check if is brew target
     if is_brew_target "$1"; then
         echo Installing "$1"...
-        install_with_brew "$1"
+        install_with_brew "$1" || exit # Exit on installation error
         return
     fi
     # Check if is cask target
     if is_cask_target "$1"; then
-        install_with_brew "$1"
+        echo Installing "$1"...
+        install_with_brew "$1" || exit # Exit on installation error
         return
     fi
     cat <<EOS

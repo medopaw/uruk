@@ -72,9 +72,7 @@ If no `custom.conf` was found, Uruk will read from `default.conf`.
 
 Uruk use `command -v` to check if a target is installed. You can specify different checking method in `is_installed.sh` in the folder with target name.
 
-You should always call `return` in `is_installed.sh` at the end of execution. Otherwise there may be wrong results.
-
-Both `true`/`false` and `0`/`1` are valid return values.
+The status code explicitly or implicitly returned from `is_installed` will be used to check if it is installed: `0` means installed, otherwise not installed.
 
 Often a customized `is_installed` is needed if you want to use `brew` or other installed version instead of system default version.
 
@@ -96,6 +94,25 @@ chmod +x install.sh
 5. python
 6. rbenv
 7. ruby
+8. tig
+9. tldr
+10. autojump
+11. ranger
+12. iterm2
+13. firefox
+14. google-chrome
+15. sublime-text
+16. visual-studio-code
+17. pycharm-ce-with-anaconda-plugin
+18. github
+19. switchhosts
+20. sogouinput
+21. baiduinput
+22. wechat
+23. qq
+24. neteasemusic
+25. qqmusic
+26. baidunetdisk
 
 All depended targets will be installed first. The dependency is specified in installation scripts by calling `install_if_need`. You can modify installation script to customize your own installation.
 
