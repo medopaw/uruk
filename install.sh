@@ -40,7 +40,7 @@ exists_in_application_folder() {
 }
 
 is_brew_target() {
-    if [ -r "$current_dir/targets/$1.brewtarget " ]; then
+    if [ -r "$current_dir/targets/$1.brewtarget" ]; then
         true
         return
     else
@@ -50,7 +50,7 @@ is_brew_target() {
 }
 
 is_cask_target() {
-    if [ -r "$current_dir/targets/$1.casktarget " ]; then
+    if [ -r "$current_dir/targets/$1.casktarget" ]; then
         true
         return
     else
