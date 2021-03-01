@@ -63,7 +63,7 @@ install_with_brew() {
 
 is_installed() {
     # Check if `is_installed.sh` exists
-    script_path="$current_dir/targets/$1/is_installed.sh"
+    local script_path="$current_dir/targets/$1/is_installed.sh"
     if [ -r "$script_path" ]; then
         add_execution_permission "$script_path"
         source_script "$script_path"
@@ -117,6 +117,7 @@ install_one() {
         echo "Error: Nothing to install."
         return 1
     fi
+    local script_path=''
     if [ -r "$current_dir/targets/$1/install.sh" ]; then
         script_path="$current_dir/targets/$1/install.sh"
         echo Installing "$1"...
