@@ -16,7 +16,7 @@ if ! is_installed brew; then
     cask_dir=/usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask
     mkdir -p "$cask_dir"
     git clone https://mirrors.ustc.edu.cn/homebrew-cask.git "$cask_dir"
-    /bin/bash brew/brew.sh
+    /bin/bash targets/brew/brew.sh
     append_to_profile_if_needed "export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles"
     source_profile
 fi

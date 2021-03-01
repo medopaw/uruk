@@ -39,6 +39,26 @@ exists_in_application_folder() {
     fi
 }
 
+is_brew_target() {
+    if [ -r "$current_dir/targets/$1.brewtarget " ]; then
+        true
+        return
+    else
+        false
+        return
+    fi
+}
+
+is_cask_target() {
+    if [ -r "$current_dir/targets/$1.casktarget " ]; then
+        true
+        return
+    else
+        false
+        return
+    fi
+}
+
 is_installed_by_brew() {
     install_if_needed brew
     brew list "$1" &>/dev/null
@@ -57,25 +77,26 @@ install_with_brew() {
 }
 
 is_installed() {
-    script_path=$current_dir/$1/is_installed.sh
+    # Check if `is_installed.sh` exists
+    script_path="$current_dir/targets/$1/is_installed.sh"
     if [ -r "$script_path" ]; then
         add_execution_permission "$script_path"
-        if source_script "$script_path"; then
-            true
-            return
-        else
-            false
-            return
-        fi
-    else
-        if command -v "$1" >/dev/null 2>&1; then
-            true
-            return
-        else
-            false
-            return
-        fi
+        source_script "$script_path"
+        return
     fi
+    # Check if is brew target
+    if is_brew_target "$1"; then
+        is_installed_by_brew "$1"
+        return
+    fi
+    # Check if is cask target
+    if is_cask_target "$1"; then
+        is_cask_installed_by_brew "$1"
+        return
+    fi
+    # Check if command exists
+    command -v "$1" >/dev/null 2>&1
+    return
 }
 
 install_if_needed() {
@@ -113,19 +134,39 @@ install_one() {
         return
     fi
     # `python/install.sh` > `python.sh`
-    if [ -r "$current_dir/$1/install.sh" ]; then
+    if [ -r "$current_dir/targets/$1/install.sh" ]; then
         script_path=$current_dir/$1/install.sh
     else
-        if [ -r "$current_dir/$1.sh" ]; then
+        if [ -r "$current_dir/targets/$1.sh" ]; then
             script_path=$current_dir/$1.sh
-        else
-            echo "Can't locate $current_dir/$1/install.sh or $current_dir/$1.sh"
-            return
         fi
     fi
-    echo Installing "$1"...
-    add_execution_permission "$script_path"
-    source_script "$script_path" || exit $? # Exit on installation error
+    if [ -z "$script_path" ]; then # Execute script if found
+        echo Installing "$1"...
+        add_execution_permission "$script_path"
+        source_script "$script_path" || exit $? # Exit on installation error
+        return
+    fi
+    # Check if is brew target
+    if is_brew_target "$1"; then
+        echo Installing "$1"...
+        install_with_brew "$1"
+        return
+    fi
+    # Check if is cask target
+    if is_cask_target "$1"; then
+        install_with_brew "$1"
+        return
+    fi
+    cat <<EOS
+Error: You need to specify the way to install target $1
+You can do any of the following:
+1. Create $current_dir/targets/$1/install.sh and write installation code.
+2. Create $current_dir/targets/$1.sh and write installation code.
+3. Create $current_dir/targets/$1.brewtarget with empty content if it's a brew command line tool.
+4. Create $current_dir/targets/$1.casktarget with empty content if it's a brew cask app.
+EOS
+    return 1 # Can't install. Need to stop.
 }
 
 current_dir=$PWD
