@@ -45,6 +45,12 @@ is_installed_by_brew() {
     return
 }
 
+is_cask_installed_by_brew() {
+    install_if_needed brew
+    brew list --cask "$1" &>/dev/null
+    return
+}
+
 install_with_brew() {
     install_if_needed brew
     brew install "$1"
