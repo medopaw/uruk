@@ -135,10 +135,10 @@ install_one() {
     fi
     # `python/install.sh` > `python.sh`
     if [ -r "$current_dir/targets/$1/install.sh" ]; then
-        script_path=$current_dir/$1/install.sh
+        script_path=$current_dir/targets/$1/install.sh
     else
         if [ -r "$current_dir/targets/$1.sh" ]; then
-            script_path=$current_dir/$1.sh
+            script_path=$current_dir/targets/$1.sh
         fi
     fi
     if [ ! -z "$script_path" ]; then # Execute script if found
