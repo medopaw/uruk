@@ -160,6 +160,7 @@ install_one() {
     fi
     cat <<EOS
 Error: You need to specify the way to install target $1
+
 You can do any of the following:
 1. Create $current_dir/targets/$1/install.sh and write installation code.
 2. Create $current_dir/targets/$1.sh and write installation code.
