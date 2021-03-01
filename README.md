@@ -132,11 +132,15 @@ For every install target (i.e. python, ruby, etc.), Uruk decides which install s
 
 For each name retrieved in step 1 or 2, Uruk will try to resolve it and run specific script. Let's say the name is "python" --
 
-1. If `python/is_installed.sh` exists, use its returned value (`true` or `0` means installed, otherwise not installed)
-2. Run `command -v python` to check if `python` is installed
+1. If `targets/python/is_installed.sh` exists, use its returned value (`true` or `0` means installed, otherwise not installed)
+2. If `targets/python.brewtarget` exists, treat it as a brew target and check if `brew list python` has `0` exit code.
+3. If `targets/python.casktarget` exists, treat it as a cask target and check if `brew list --cask python` has `0` exit code.
+4. Run `command -v python` to check if `python` is installed
 
 ### Install one target
 
 1. Uruk will try to run `python/install.sh`.
 2. If `python/install.sh` does not exist, Uruk will try to run `python.sh` under current directory instead.
 3. If `python.sh` does not exist either, a message will appear, telling you Uruk can't locate any install script.
+4. If `targets/python.brewtarget` exists, treat it as a brew target and run `brew install python`.
+5. If `targets/python.casktarget` exists, treat it as a cask target and run `brew install python`.
