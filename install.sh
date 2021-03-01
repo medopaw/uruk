@@ -108,7 +108,7 @@ install_all() {
         fi
     fi
     if [ -z "$all_targets" ]; then # Still no arguments
-        echo Error: Please specify target(s) to install.
+        echo "Error: Please specify target(s) to install."
         return 1
     fi
     for target in $all_targets
@@ -119,7 +119,7 @@ install_all() {
 
 install_one() {
     if [ -z "$1" ]; then
-        echo Error: Nothing to install.
+        echo "Error: Nothing to install."
         return 1
     fi
     if [ -r "$current_dir/targets/$1/install.sh" ]; then
