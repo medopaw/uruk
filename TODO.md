@@ -1,5 +1,2 @@
-- [x] Check `append_to_profile_if_needed` in `brew` installation. There might be an issue of profile not being written.
-    - [x] Provide a option of installing USTC mirrored version of brew.
 - [ ] Check that `oh-my-zsh` installation exits on completion and no further targets get installed.
 - [ ] Ensure that old shell profile gets copied to `~/.zshrc` after `oh-my-zsh` script execution.
-- [x] Test new autojump installation works, especially `append_to_profile_if_needed` part.
