@@ -1,2 +1,0 @@
-- [x] Check that `oh-my-zsh` installation exits on completion and no further targets get installed.
-- [x] Ensure that old shell profile gets copied to `~/.zshrc` after `oh-my-zsh` script execution.
