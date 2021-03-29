@@ -61,6 +61,11 @@ install_with_brew() {
     brew install "$1"
 }
 
+install_cask_with_brew() {
+    install_if_needed brew
+    brew install --cask "$1"
+}
+
 is_installed() {
     # Check if `is_installed.sh` exists
     local script_path="$current_dir/targets/$1/is_installed.sh"
@@ -141,7 +146,7 @@ install_one() {
     # Check if is cask target
     if is_cask_target "$1"; then
         echo Installing "$1"...
-        install_with_brew "$1" || exit # Exit on installation error
+        install_cask_with_brew "$1" || exit # Exit on installation error
         return
     fi
     cat <<EOS
