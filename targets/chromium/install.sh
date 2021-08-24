@@ -1,4 +1,4 @@
 #!/bin/sh
 
-install_with_brew chromium
+install_cask_with_brew chromium
 xattr -cr /Application/Chromium.app
