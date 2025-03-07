@@ -90,9 +90,14 @@ is_installed() {
 
 install_if_needed() {
     if is_installed "$1"; then
-        echo "$1" already installed.
+        if ! $silent_if_possible; then
+            echo "$1" already installed.
+        fi
     else
         install_one "$1"
+        if [ $? -eq 0 ]; then
+            anything_installed=true
+        fi
     fi
 }
 
@@ -178,9 +183,24 @@ case "$SHELL" in
     ;;
 esac
 needs_source_profile=false
-install_all "$@"
+anything_installed=false
+silent_if_possible=false
+cli_params=()
+# 遍历所有参数，过滤出 --silent-if-possible 参数
+for arg in "$@"; do
+    if [[ "$arg" == "--silent-if-possible" ]]; then
+        silent_if_possible=true
+    else
+        cli_params+=("$arg")
+    fi
+done
+install_all "${cli_params[@]}"
 if [ $? -eq 0 ]; then
-    echo "Installation complete."
+    if $anything_installed; then
+        if ! $silent_if_possible; then
+            echo "Installation complete."
+        fi
+    fi
     if $needs_source_profile; then
         echo
         echo "Please type following commands into terminal and press Enter:"
