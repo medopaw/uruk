@@ -30,6 +30,11 @@ exists_in_application_folder() {
     fi
 }
 
+get_mas_id() {
+    local target_file="$current_dir/targets/$1.mastarget"
+    [ -r "$target_file" ] && cat "$target_file" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' || echo ""
+}
+
 is_brew_target() {
     if [ -r "$current_dir/targets/$1.brewtarget" ]; then
         true
@@ -46,6 +51,14 @@ is_cask_target() {
     fi
 }
 
+is_mas_target() {
+    if [ -r "$current_dir/targets/$1.mastarget" ]; then
+        true
+    else
+        false
+    fi
+}
+
 is_installed_by_brew() {
     install_if_needed brew
     brew list "$1" &>/dev/null
@@ -56,6 +69,17 @@ is_cask_installed_by_brew() {
     brew list --cask "$1" &>/dev/null
 }
 
+is_installed_by_mas() {
+    install_if_needed mas
+    local mas_id=$(get_mas_id "$1")
+    if [ -z "$mas_id" ]; then
+        echo "Error: No MAS ID found for $1" >&2
+        exit 1
+    fi
+    # 从 mas list 中查找以 $mas_id 开头的行
+    mas list | grep -q "^$mas_id"
+}
+
 install_with_brew() {
     install_if_needed brew
     brew install "$1"
@@ -64,6 +88,17 @@ install_with_brew() {
 install_cask_with_brew() {
     install_if_needed brew
     brew install --cask "$1"
+}
+
+install_with_mas() {
+    install_if_needed mas
+    local mas_id=$(get_mas_id "$1")
+    if [ -z "$mas_id" ]; then
+        echo "Error: No MAS ID found for $1" >&2
+        exit 1
+    fi
+    echo "mas id: $mas_id"
+    mas install "$mas_id"
 }
 
 is_installed() {
@@ -82,6 +117,11 @@ is_installed() {
     # Check if is cask target
     if is_cask_target "$1"; then
         is_cask_installed_by_brew "$1"
+        return
+    fi
+    # Check if is mas target
+    if is_mas_target "$1"; then
+        is_installed_by_mas "$1"
         return
     fi
     # Check if command exists
@@ -113,7 +153,7 @@ install_all() {
         fi
     fi
     if [ -z "$all_targets" ]; then # Still no arguments
-        echo "Error: Please specify target(s) to install."
+        echo "Error: Please specify target(s) to install." >&2
         return 1
     fi
     for target in $all_targets
@@ -124,7 +164,7 @@ install_all() {
 
 install_one() {
     if [ -z "$1" ]; then
-        echo "Error: Nothing to install."
+        echo "Error: Nothing to install." >&2
         return 1
     fi
     local script_path=''
@@ -154,6 +194,12 @@ install_one() {
         install_cask_with_brew "$1" || exit # Exit on installation error
         return
     fi
+    # Check if is mas target
+    if is_mas_target "$1"; then
+        echo Installing "$1"...
+        install_with_mas "$1" || exit # Exit on installation error
+        return
+    fi
     cat <<EOS
 Error: You need to specify the way to install target $1
 
@@ -162,6 +208,7 @@ You can do any of the following:
 2. Create $current_dir/targets/$1.sh and write installation code.
 3. Create $current_dir/targets/$1.brewtarget with empty content if it's a brew command line tool.
 4. Create $current_dir/targets/$1.casktarget with empty content if it's a brew cask app.
+5. Create $current_dir/targets/$1.mastarget with Mac App Store ID if it's a MAS app.
 EOS
     return 1 # Can't install. Need to stop.
 }

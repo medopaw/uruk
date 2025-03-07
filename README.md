@@ -14,7 +14,7 @@ Notice that it only works on macOS for now.
 git clone https://github.com/medopaw/uruk.git
 ```
 
-Or download https://github.com/medopaw/uruk/archive/master.zip and extract to lcoal directory.
+Or download https://github.com/medopaw/uruk/archive/master.zip and extract to local directory.
 
 ## Install Dev Tools Using Uruk
 
@@ -48,18 +48,19 @@ Of course you can edit `default.conf` directly and include changes and submit to
 
 You can configure multiple tools in `custom.conf` like this:
 
-```
+```bash
 python
 ruby
 ```
 
 or
 
-```
+```bash
 python ruby
 ```
 
 And then run
+
 ```bash
 make install
 ```
@@ -114,14 +115,16 @@ chmod +x install.sh
 25. neteasemusic
 26. qqmusic
 27. baidunetdisk
+28. mas
+29. caffeinate
 
-All depended targets will be installed first. The dependency is specified in installation scripts by calling `install_if_need`. You can modify installation script to customize your own installation.
+All depended targets will be installed first. The dependency is specified in installation scripts by calling `install_if_needed`. You can modify installation script to customize your own installation.
 
 For what is shipped, e.g. pyenv, fzf and brew will be installed before installing python.
 
 ## Under the Hood
 
-### Retrive targets
+### Retrieve targets
 
 For every install target (i.e. python, ruby, etc.), Uruk decides which install script(s) should be run first by retrieving name(s) from:
 
@@ -136,7 +139,8 @@ For each name retrieved in step 1 or 2, Uruk will try to resolve it and run spec
 1. If `targets/python/is_installed.sh` exists, use its returned value (`true` or `0` means installed, otherwise not installed)
 2. If `targets/python.brewtarget` exists, treat it as a brew target and check if `brew list python` has `0` exit code.
 3. If `targets/python.casktarget` exists, treat it as a cask target and check if `brew list --cask python` has `0` exit code.
-4. Run `command -v python` to check if `python` is installed
+4. If `targets/python.mastarget` exists, treat it as a Mac App Store target and read MAS ID from it and check if `mas list | grep "^$mas_id"` has `0` exit code.
+5. Run `command -v python` to check if `python` is installed
 
 ### Install one target
 
@@ -145,3 +149,4 @@ For each name retrieved in step 1 or 2, Uruk will try to resolve it and run spec
 3. If `python.sh` does not exist either, a message will appear, telling you Uruk can't locate any install script.
 4. If `targets/python.brewtarget` exists, treat it as a brew target and run `brew install python`.
 5. If `targets/python.casktarget` exists, treat it as a cask target and run `brew install python`.
+6. If `targets/python.mastarget` exists, treat it as a Mac App Store target and read MAS ID form it and run `mas install $mas_id`.
