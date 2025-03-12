@@ -59,6 +59,14 @@ is_mas_target() {
     fi
 }
 
+is_cargo_target() {
+    if [ -r "$current_dir/targets/$1.cargotarget" ]; then
+        true
+    else
+        false
+    fi
+}
+
 is_installed_by_brew() {
     install_if_needed brew
     brew list "$1" &>/dev/null
@@ -78,6 +86,11 @@ is_installed_by_mas() {
     fi
     # 从 mas list 中查找以 $mas_id 开头的行
     mas list | grep -q "^$mas_id"
+}
+
+is_installed_by_cargo() {
+    install_if_needed cargo
+    cargo install --list | grep -q "^$1 "
 }
 
 install_with_brew() {
@@ -101,6 +114,11 @@ install_with_mas() {
     mas install "$mas_id"
 }
 
+install_with_cargo() {
+    install_if_needed rust
+    cargo install "$1"
+}
+
 is_installed() {
     # Check if `is_installed.sh` exists
     local script_path="$current_dir/targets/$1/is_installed.sh"
@@ -122,6 +140,11 @@ is_installed() {
     # Check if is mas target
     if is_mas_target "$1"; then
         is_installed_by_mas "$1"
+        return
+    fi
+    # Check if is cargo target
+    if is_cargo_target "$1"; then
+        is_installed_by_cargo "$1"
         return
     fi
     # Check if command exists
@@ -200,6 +223,12 @@ install_one() {
         install_with_mas "$1" || exit # Exit on installation error
         return
     fi
+    # Check if is cargo target
+    if is_cargo_target "$1"; then
+        echo Installing "$1"...
+        install_with_cargo "$1" || exit # Exit on installation error
+        return
+    fi
     cat <<EOS
 Error: You need to specify the way to install target $1
 
@@ -209,6 +238,7 @@ You can do any of the following:
 3. Create $current_dir/targets/$1.brewtarget with empty content if it's a brew command line tool.
 4. Create $current_dir/targets/$1.casktarget with empty content if it's a brew cask app.
 5. Create $current_dir/targets/$1.mastarget with Mac App Store ID if it's a MAS app.
+6. Create $current_dir/targets/$1.cargotarget with empty content if it's a cargo package.
 EOS
     return 1 # Can't install. Need to stop.
 }
