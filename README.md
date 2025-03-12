@@ -121,6 +121,7 @@ chmod +x install.sh
 31. makers
 32. loopback
 33. rsync
+34. hammerspoon 
 
 All depended targets will be installed first. The dependency is specified in installation scripts by calling `install_if_needed`. You can modify installation script to customize your own installation.
 
