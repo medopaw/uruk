@@ -31,12 +31,12 @@ exists_in_application_folder() {
 }
 
 get_mas_id() {
-    local target_file="$current_dir/targets/$1.mastarget"
+    local target_file="$root_dir/targets/$1.mastarget"
     [ -r "$target_file" ] && cat "$target_file" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' || echo ""
 }
 
 is_brew_target() {
-    if [ -r "$current_dir/targets/$1.brewtarget" ]; then
+    if [ -r "$root_dir/targets/$1.brewtarget" ]; then
         true
     else
         false
@@ -44,7 +44,7 @@ is_brew_target() {
 }
 
 is_cask_target() {
-    if [ -r "$current_dir/targets/$1.casktarget" ]; then
+    if [ -r "$root_dir/targets/$1.casktarget" ]; then
         true
     else
         false
@@ -52,7 +52,7 @@ is_cask_target() {
 }
 
 is_mas_target() {
-    if [ -r "$current_dir/targets/$1.mastarget" ]; then
+    if [ -r "$root_dir/targets/$1.mastarget" ]; then
         true
     else
         false
@@ -60,7 +60,7 @@ is_mas_target() {
 }
 
 is_cargo_target() {
-    if [ -r "$current_dir/targets/$1.cargotarget" ]; then
+    if [ -r "$root_dir/targets/$1.cargotarget" ]; then
         true
     else
         false
@@ -121,7 +121,7 @@ install_with_cargo() {
 
 is_installed() {
     # Check if `is_installed.sh` exists
-    local script_path="$current_dir/targets/$1/is_installed.sh"
+    local script_path="$root_dir/targets/$1/is_installed.sh"
     if [ -r "$script_path" ]; then
         add_execution_permission "$script_path"
         source_script "$script_path"
@@ -167,11 +167,11 @@ install_if_needed() {
 install_all() {
     all_targets=$*
     if [ -z "$all_targets" ]; then # No arguments
-        if [ -r "$current_dir/custom.conf" ]; then # Read custom.conf
-            all_targets=$(cat "$current_dir/custom.conf")
+        if [ -r "$root_dir/custom.conf" ]; then # Read custom.conf
+            all_targets=$(cat "$root_dir/custom.conf")
         else
-            if [ -r "$current_dir/default.conf" ]; then # Read default.conf
-                all_targets=$(cat "$current_dir/default.conf")
+            if [ -r "$root_dir/default.conf" ]; then # Read default.conf
+                all_targets=$(cat "$root_dir/default.conf")
             fi
         fi
     fi
@@ -191,15 +191,15 @@ install_one() {
         return 1
     fi
     local script_path=''
-    if [ -r "$current_dir/targets/$1/install.sh" ]; then
-        script_path="$current_dir/targets/$1/install.sh"
+    if [ -r "$root_dir/targets/$1/install.sh" ]; then
+        script_path="$root_dir/targets/$1/install.sh"
         echo Installing "$1"...
         add_execution_permission "$script_path"
         source_script "$script_path" || exit # Exit on installation error
         return
     fi
-    if [ -r "$current_dir/targets/$1.sh" ]; then
-        script_path="$current_dir/targets/$1.sh"
+    if [ -r "$root_dir/targets/$1.sh" ]; then
+        script_path="$root_dir/targets/$1.sh"
         echo Installing "$1"...
         add_execution_permission "$script_path"
         source_script "$script_path" || exit # Exit on installation error
@@ -233,17 +233,17 @@ install_one() {
 Error: You need to specify the way to install target $1
 
 You can do any of the following:
-1. Create $current_dir/targets/$1/install.sh and write installation code.
-2. Create $current_dir/targets/$1.sh and write installation code.
-3. Create $current_dir/targets/$1.brewtarget with empty content if it's a brew command line tool.
-4. Create $current_dir/targets/$1.casktarget with empty content if it's a brew cask app.
-5. Create $current_dir/targets/$1.mastarget with Mac App Store ID if it's a MAS app.
-6. Create $current_dir/targets/$1.cargotarget with empty content if it's a cargo package.
+1. Create $root_dir/targets/$1/install.sh and write installation code.
+2. Create $root_dir/targets/$1.sh and write installation code.
+3. Create $root_dir/targets/$1.brewtarget with empty content if it's a brew command line tool.
+4. Create $root_dir/targets/$1.casktarget with empty content if it's a brew cask app.
+5. Create $root_dir/targets/$1.mastarget with Mac App Store ID if it's a MAS app.
+6. Create $root_dir/targets/$1.cargotarget with empty content if it's a cargo package.
 EOS
     return 1 # Can't install. Need to stop.
 }
 
-current_dir=$PWD
+root_dir=$(dirname "$(realpath "$0")")
 case "$SHELL" in
 */bash*)
     shell_profile="$HOME/.bash_profile"
