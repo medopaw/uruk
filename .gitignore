@@ -1,1 +1,13 @@
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# macOS specific files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Custom Configuration
 custom.conf
