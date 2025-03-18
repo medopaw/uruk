@@ -1,7 +1,3 @@
 #!/bin/sh
 
-if [[ $(command -v git) = /usr/local/bin/git ]]; then
-    true
-else
-    false
-fi
+is_installed_by_brew git
