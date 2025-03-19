@@ -129,6 +129,8 @@ chmod +x install.sh
 39. json-helper
 40. location-helper
 41. git-lfs
+42. emacs
+43. doomemacs
 
 All depended targets will be installed first. The dependency is specified in installation scripts by calling `install_if_needed`. You can modify installation script to customize your own installation.
 
