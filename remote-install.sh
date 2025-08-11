@@ -305,7 +305,9 @@ EOF
 
 open_editor() {
     local file="$1"
+    local uruk_dir="$2"  # Pass the uruk directory as parameter
     local editor="${EDITOR:-}"
+    local original_pwd="$(pwd)"
     
     # Determine the best available editor
     if [ -z "$editor" ]; then
@@ -352,6 +354,9 @@ open_editor() {
     echo "⚠️  Essential tools are already enabled by default"
     echo ""
     
+    # Change to uruk directory before opening editor
+    cd "$uruk_dir" || error "Failed to enter Uruk directory before editing"
+    
     # Handle different execution environments
     if [ ! -t 0 ] || [ ! -t 1 ]; then
         # Running in non-interactive mode (e.g., piped from curl)
@@ -363,40 +368,35 @@ open_editor() {
         echo ""
         echo "🔧 Attempting to open editor with terminal access..."
         
-        # Try to access the controlling terminal directly
+        # Open editor with TTY redirection but don't use exec (which replaces the process)
         if [ -e /dev/tty ]; then
-            exec < /dev/tty
-            exec > /dev/tty
-            exec 2> /dev/tty
+            "$editor" "$file" < /dev/tty > /dev/tty 2>&1
+        else
+            "$editor" "$file"
         fi
     else
         read -p "Press Enter to open the editor..." -r
-    fi
-    
-    # Open the editor - try multiple methods for maximum compatibility
-    if [ -e /dev/tty ]; then
-        # Method 1: Direct TTY access
-        "$editor" "$file" < /dev/tty > /dev/tty 2>&1
-    else
-        # Method 2: Standard streams
+        # Open the editor normally
         "$editor" "$file"
     fi
     
     # Verify the editor was used (file was modified)
     if [ ! -s "$file" ]; then
+        cd "$original_pwd"  # Restore original directory
         error "Configuration file is empty. Installation cancelled."
     fi
     
     echo ""
     echo "✅ Configuration saved. Proceeding with installation..."
+    # Stay in uruk directory for the installation
 }
 
 main() {
     echo "🚀 Uruk Remote Installation Script"
     echo "=================================="
     
-    # Trap cleanup function
-    trap cleanup EXIT INT TERM
+    # Only cleanup on interrupt/termination, not on normal exit
+    trap cleanup INT TERM
     
     # Check environment
     check_macos
@@ -424,7 +424,7 @@ main() {
     success "Found $(wc -l < "$config_file" | tr -d ' ') configuration options"
     
     # Let user edit configuration
-    open_editor "$config_file"
+    open_editor "$config_file" "$URUK_DIR"
     
     # Verify configuration
     local enabled_count=$(grep -v "^#" "$config_file" | grep -v "^$" | wc -l | tr -d ' ')
@@ -446,11 +446,15 @@ main() {
         exit 0
     fi
     
-    # Run installation
+    # Run installation (we should already be in URUK_DIR after open_editor)
     log "Starting installation..."
     
-    if ! cd "$URUK_DIR" 2>/dev/null; then
-        error "Failed to enter Uruk directory: $URUK_DIR"
+    # Verify we're in the right directory
+    if [ ! -f "install.sh" ] || [ ! -d "targets" ]; then
+        # If not, try to change to the correct directory
+        if ! cd "$URUK_DIR" 2>/dev/null; then
+            error "Failed to enter Uruk directory: $URUK_DIR"
+        fi
     fi
     
     if [ ! -f "install.sh" ]; then
@@ -464,6 +468,14 @@ main() {
         echo ""
         echo "🎉 Welcome to your newly configured development environment!"
         echo "💡 You may need to restart your terminal or run 'source ~/.zshrc' to apply changes."
+        echo ""
+        echo "📁 Uruk directory: $URUK_DIR"
+        echo "🔧 To install more tools:"
+        echo "   cd $URUK_DIR"
+        echo "   nano custom.conf  # Edit configuration"
+        echo "   ./install.sh      # Run installation again"
+        echo ""
+        echo "🗑️  The temporary directory will be cleaned up automatically by the system."
     else
         error "Installation failed. Please check the output above for details."
     fi
