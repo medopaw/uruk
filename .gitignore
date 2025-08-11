@@ -12,3 +12,4 @@
 # Custom Configuration
 custom.conf
 .aider*
+.claude/
