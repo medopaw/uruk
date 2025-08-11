@@ -8,7 +8,28 @@ Named after the first city in recorded history, Uruk is designed to simplify ins
 
 Notice that it only works on macOS for now.
 
-## Install Uruk
+## Quick Start (Remote Installation)
+
+**One-line installation** - No need to clone the repository:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/medopaw/uruk/master/remote-install.sh | bash
+```
+
+This will:
+1. 🚀 Automatically download and set up Uruk in a temporary directory
+2. 🔍 Scan all available installation targets and generate a configuration file
+3. ✏️ Open your preferred editor to customize which tools to install
+4. ⚡ Run the installation with your selected tools
+5. 🧹 Clean up temporary files automatically
+
+Essential tools like `git` are enabled by default. You can add more by uncommenting lines in the configuration file.
+
+## Manual Installation
+
+If you prefer to customize before running, or want to keep the repository locally:
+
+### Clone the Repository
 
 ```bash
 git clone https://github.com/medopaw/uruk.git
@@ -16,7 +37,7 @@ git clone https://github.com/medopaw/uruk.git
 
 Or download https://github.com/medopaw/uruk/archive/master.zip and extract to local directory.
 
-## Install Dev Tools Using Uruk
+### Install Dev Tools
 
 First enter Uruk directory.
 
@@ -32,7 +53,7 @@ make install
 
 If a popup update window appears and ask you to install xcode-select command line developer tools, click "Install" and wait till it finishes.
 
-By default, this will install git (brew version), python (pyenv version) and ruby (rbenv version) if nothing modified.
+By default, this will install git (brew version) and rust if nothing modified.
 
 ## Customization
 
