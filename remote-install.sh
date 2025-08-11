@@ -132,7 +132,7 @@ get_target_description() {
         tig) echo "Text interface for Git" ;;
         mas) echo "Mac App Store command line interface" ;;
         brew) echo "Package manager for macOS" ;;
-        jbenv) echo "Java version manager" ;;
+        jenv) echo "Java version manager" ;;
         rbenv) echo "Ruby version manager" ;;
         pyenv) echo "Python version manager" ;;
         *) 
