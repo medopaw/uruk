@@ -469,10 +469,26 @@ main() {
     echo ""
     
     # Confirm installation
-    read -p "🤔 Do you want to proceed with installation? (y/N): " -r reply
-    if [[ ! "$reply" =~ ^[Yy]$ ]]; then
-        log "Installation cancelled by user"
-        exit 0
+    if [ -t 0 ]; then
+        # Interactive mode - ask for confirmation
+        read -p "🤔 Do you want to proceed with installation? (y/N): " -r reply
+        if [[ ! "$reply" =~ ^[Yy]$ ]]; then
+            log "Installation cancelled by user"
+            exit 0
+        fi
+    else
+        # Non-interactive mode (piped from curl) - ask via /dev/tty
+        if [ -e /dev/tty ]; then
+            echo "🤔 Do you want to proceed with installation? (Y/n): " > /dev/tty
+            read -r reply < /dev/tty
+            if [[ "$reply" =~ ^[Nn]$ ]]; then
+                log "Installation cancelled by user"
+                exit 0
+            fi
+        else
+            # No TTY available - proceed automatically
+            log "Non-interactive mode detected, proceeding with installation..."
+        fi
     fi
     
     # Run installation (we should already be in URUK_DIR after open_editor)
