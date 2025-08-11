@@ -505,7 +505,15 @@ main() {
         echo "   ./install.sh      # Run installation again"
         echo ""
         echo "🗑️  The temporary directory will be cleaned up automatically by the system."
+        echo ""
+        echo "💡 To change to the Uruk directory in your current shell:"
+        echo "   cd $URUK_DIR"
     else
+        echo ""
+        echo "💡 To retry installation or debug:"
+        echo "   cd $URUK_DIR"
+        echo "   nano custom.conf  # Edit configuration"
+        echo "   ./install.sh      # Run installation again"
         error "Installation failed. Please check the output above for details."
     fi
 }
