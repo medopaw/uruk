@@ -441,6 +441,13 @@ main() {
     echo "🔍 Debug: Returned from open_editor function"
     echo "🔍 Debug: Current directory after editor: $(pwd)"
     
+    # Ensure we're in the correct directory for installation
+    if ! cd "$URUK_DIR" 2>/dev/null; then
+        error "Failed to change to Uruk directory: $URUK_DIR"
+    fi
+    
+    echo "🔍 Debug: Changed to directory: $(pwd)"
+    
     # Verify configuration
     echo "🔍 Debug: About to check configuration file: $config_file"
     if [ ! -f "$config_file" ]; then
