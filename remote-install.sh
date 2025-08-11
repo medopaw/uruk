@@ -132,6 +132,9 @@ get_target_description() {
         tig) echo "Text interface for Git" ;;
         mas) echo "Mac App Store command line interface" ;;
         brew) echo "Package manager for macOS" ;;
+        jbenv) echo "Java version manager" ;;
+        rbenv) echo "Ruby version manager" ;;
+        pyenv) echo "Python version manager" ;;
         *) 
             # Fallback: convert hyphens to spaces and capitalize words
             echo "$target" | sed 's/-/ /g; s/\b\w/\u&/g' 2>/dev/null || echo "$target"
