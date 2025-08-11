@@ -302,39 +302,44 @@ EOF
 
 open_editor() {
     local file="$1"
-    
-    # Check if we have a TTY (interactive terminal)
-    if [ ! -t 0 ] || [ ! -t 1 ]; then
-        echo "🚨 Warning: Running in non-interactive mode (piped from curl?)"
-        echo "📝 Configuration file generated at: $file"
-        echo ""
-        echo "📋 Generated configuration preview:"
-        echo "=================================="
-        head -20 "$file" 2>/dev/null || echo "Unable to preview configuration file"
-        echo "... (showing first 20 lines)"
-        echo ""
-        echo "💡 To customize your installation:"
-        echo "   1. Save this script: curl -fsSL https://raw.githubusercontent.com/medopaw/uruk/master/remote-install.sh > install.sh"
-        echo "   2. Run it: chmod +x install.sh && ./install.sh"
-        echo "   3. Edit the configuration when prompted"
-        echo ""
-        read -p "🤔 Use default configuration (essential tools only)? (Y/n): " -r reply
-        if [[ "$reply" =~ ^[Nn]$ ]]; then
-            log "Installation cancelled. Use the manual method above to customize."
-            exit 0
-        fi
-        return
-    fi
-    
     local editor="${EDITOR:-}"
     
+    # Determine the best available editor
     if [ -z "$editor" ]; then
+        local available_editors=()
+        local editor_names=()
+        
         if command -v nano >/dev/null 2>&1; then
-            editor="nano"
-        elif command -v vi >/dev/null 2>&1; then
-            editor="vi"
-        else
+            available_editors+=("nano")
+            editor_names+=("nano (user-friendly)")
+        fi
+        
+        if command -v vi >/dev/null 2>&1; then
+            available_editors+=("vi")
+            editor_names+=("vi (minimal)")
+        fi
+        
+        if [ ${#available_editors[@]} -eq 0 ]; then
             error "No text editor found. Please set EDITOR environment variable or install nano/vi."
+        elif [ ${#available_editors[@]} -eq 1 ]; then
+            editor="${available_editors[0]}"
+            log "Using ${editor} editor"
+        else
+            echo "🔧 Multiple editors available. Please choose:"
+            for i in "${!editor_names[@]}"; do
+                echo "  $((i+1)). ${editor_names[i]}"
+            done
+            echo ""
+            
+            while true; do
+                read -p "Select editor (1-${#available_editors[@]}): " -r choice
+                if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le ${#available_editors[@]} ]; then
+                    editor="${available_editors[$((choice-1))]}"
+                    break
+                else
+                    echo "❌ Invalid choice. Please enter a number between 1 and ${#available_editors[@]}."
+                fi
+            done
         fi
     fi
     
@@ -343,14 +348,44 @@ open_editor() {
     echo "💡 Tip: Remove the # symbol from lines for tools you want to install"
     echo "⚠️  Essential tools are already enabled by default"
     echo ""
-    read -p "Press Enter to continue..." -r
     
-    # Try different methods to open editor with proper TTY handling
-    if [ -e /dev/tty ]; then
-        "$editor" "$file" < /dev/tty > /dev/tty 2>&1 || "$editor" "$file"
+    # Handle different execution environments
+    if [ ! -t 0 ] || [ ! -t 1 ]; then
+        # Running in non-interactive mode (e.g., piped from curl)
+        echo "🚨 Detected non-interactive mode (piped from curl)"
+        echo "📋 Configuration preview:"
+        echo "========================"
+        head -10 "$file" 2>/dev/null || echo "Unable to preview configuration"
+        echo "... (showing first 10 lines)"
+        echo ""
+        echo "🔧 Attempting to open editor with terminal access..."
+        
+        # Try to access the controlling terminal directly
+        if [ -e /dev/tty ]; then
+            exec < /dev/tty
+            exec > /dev/tty
+            exec 2> /dev/tty
+        fi
     else
+        read -p "Press Enter to open the editor..." -r
+    fi
+    
+    # Open the editor - try multiple methods for maximum compatibility
+    if [ -e /dev/tty ]; then
+        # Method 1: Direct TTY access
+        "$editor" "$file" < /dev/tty > /dev/tty 2>&1
+    else
+        # Method 2: Standard streams
         "$editor" "$file"
     fi
+    
+    # Verify the editor was used (file was modified)
+    if [ ! -s "$file" ]; then
+        error "Configuration file is empty. Installation cancelled."
+    fi
+    
+    echo ""
+    echo "✅ Configuration saved. Proceeding with installation..."
 }
 
 main() {
