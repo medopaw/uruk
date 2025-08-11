@@ -25,6 +25,20 @@ This will:
 
 Essential tools like `git` are enabled by default. You can add more by uncommenting lines in the configuration file.
 
+### Debug Mode
+
+To enable debug output for troubleshooting:
+
+```bash
+URUK_DEBUG=1 curl -fsSL https://raw.githubusercontent.com/medopaw/uruk/master/remote-install.sh | bash
+```
+
+This will show detailed information about:
+- Directory operations and file checks
+- Configuration file processing  
+- Target discovery and parsing
+- Installation command execution
+
 ## Manual Installation
 
 If you prefer to customize before running, or want to keep the repository locally:

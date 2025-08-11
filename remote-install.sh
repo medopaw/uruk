@@ -2,6 +2,15 @@
 
 set -e
 
+# Debug mode - set URUK_DEBUG=1 to enable debug output
+DEBUG=${URUK_DEBUG:-0}
+
+debug() {
+    if [ "$DEBUG" = "1" ]; then
+        echo "🔍 Debug: $1"
+    fi
+}
+
 REPO_URL="https://github.com/medopaw/uruk.git"
 TEMP_DIR="/tmp/uruk-remote-$(date +%s)"
 URUK_DIR="$TEMP_DIR/uruk"
@@ -394,11 +403,11 @@ open_editor() {
     
     echo ""
     echo "✅ Configuration saved. Proceeding with installation..."
-    echo "🔍 Debug: Current directory is $(pwd)"
-    echo "🔍 Debug: Config file path is $file"
-    echo "🔍 Debug: Config file exists: $([ -f "$file" ] && echo "yes" || echo "no")"
+    debug "Current directory is $(pwd)"
+    debug "Config file path is $file"
+    debug "Config file exists: $([ -f "$file" ] && echo "yes" || echo "no")"
     if [ -f "$file" ]; then
-        echo "🔍 Debug: Config file size: $(wc -l < "$file") lines"
+        debug "Config file size: $(wc -l < "$file") lines"
     fi
     # Stay in uruk directory for the installation
 }
@@ -438,24 +447,24 @@ main() {
     # Let user edit configuration
     open_editor "$config_file" "$URUK_DIR"
     
-    echo "🔍 Debug: Returned from open_editor function"
-    echo "🔍 Debug: Current directory after editor: $(pwd)"
+    debug "Returned from open_editor function"
+    debug "Current directory after editor: $(pwd)"
     
     # Ensure we're in the correct directory for installation
     if ! cd "$URUK_DIR" 2>/dev/null; then
         error "Failed to change to Uruk directory: $URUK_DIR"
     fi
     
-    echo "🔍 Debug: Changed to directory: $(pwd)"
+    debug "Changed to directory: $(pwd)"
     
     # Verify configuration
-    echo "🔍 Debug: About to check configuration file: $config_file"
+    debug "About to check configuration file: $config_file"
     if [ ! -f "$config_file" ]; then
         error "Configuration file not found: $config_file"
     fi
     
     local enabled_count=$(grep -v "^#" "$config_file" | grep -v "^$" | wc -l | tr -d ' ')
-    echo "🔍 Debug: Enabled count: '$enabled_count'"
+    debug "Enabled count: '$enabled_count'"
     
     if [ "$enabled_count" -eq 0 ]; then
         error "No tools selected for installation. Aborting."
@@ -494,21 +503,25 @@ main() {
     # Run installation (we should already be in URUK_DIR after open_editor)
     log "Starting installation..."
     
-    echo "🔍 Debug: Current directory before installation: $(pwd)"
-    echo "🔍 Debug: Listing current directory contents:"
-    ls -la
-    echo "🔍 Debug: Checking for install.sh: $([ -f "install.sh" ] && echo "found" || echo "not found")"
-    echo "🔍 Debug: Checking for targets dir: $([ -d "targets" ] && echo "found" || echo "not found")"
+    debug "Current directory before installation: $(pwd)"
+    if [ "$DEBUG" = "1" ]; then
+        echo "🔍 Debug: Listing current directory contents:"
+        ls -la
+    fi
+    debug "Checking for install.sh: $([ -f "install.sh" ] && echo "found" || echo "not found")"
+    debug "Checking for targets dir: $([ -d "targets" ] && echo "found" || echo "not found")"
     
     # Verify we're in the right directory
     if [ ! -f "install.sh" ] || [ ! -d "targets" ]; then
-        echo "🔍 Debug: Missing files, trying to change to correct directory: $URUK_DIR"
+        debug "Missing files, trying to change to correct directory: $URUK_DIR"
         if ! cd "$URUK_DIR" 2>/dev/null; then
             error "Failed to enter Uruk directory: $URUK_DIR"
         fi
-        echo "🔍 Debug: After cd, current directory: $(pwd)"
-        echo "🔍 Debug: After cd, listing contents:"
-        ls -la
+        debug "After cd, current directory: $(pwd)"
+        if [ "$DEBUG" = "1" ]; then
+            echo "🔍 Debug: After cd, listing contents:"
+            ls -la
+        fi
     fi
     
     if [ ! -f "install.sh" ]; then
@@ -517,13 +530,13 @@ main() {
     
     chmod +x install.sh || error "Failed to make install.sh executable"
     
-    echo "🔍 Debug: About to execute: ./install.sh"
-    echo "🔍 Debug: install.sh will look for root_dir at: $(dirname "$(realpath "./install.sh")" 2>/dev/null || dirname "$(pwd)/install.sh")"
+    debug "About to execute: ./install.sh"
+    debug "install.sh will look for root_dir at: $(dirname "$(realpath "./install.sh")" 2>/dev/null || dirname "$(pwd)/install.sh")"
     
     # Extract clean target list from config file (remove comments and empty lines)
     local clean_targets
     clean_targets=$(grep -v "^#" "$config_file" | grep -v "^$" | sed 's/#.*$//' | sed 's/[[:space:]]*$//' | tr '\n' ' ')
-    echo "🔍 Debug: Clean targets to install: '$clean_targets'"
+    debug "Clean targets to install: '$clean_targets'"
     
     if ./install.sh $clean_targets; then
         success "Installation completed successfully!"
