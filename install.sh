@@ -168,10 +168,12 @@ install_all() {
     all_targets=$*
     if [ -z "$all_targets" ]; then # No arguments
         if [ -r "$root_dir/custom.conf" ]; then # Read custom.conf
-            all_targets=$(cat "$root_dir/custom.conf")
+            # Extract clean target list from config file (remove comments and empty lines)
+            all_targets=$(grep -v "^#" "$root_dir/custom.conf" | grep -v "^$" | sed 's/#.*$//' | sed 's/[[:space:]]*$//' | tr '\n' ' ')
         else
             if [ -r "$root_dir/default.conf" ]; then # Read default.conf
-                all_targets=$(cat "$root_dir/default.conf")
+                # Extract clean target list from config file (remove comments and empty lines)
+                all_targets=$(grep -v "^#" "$root_dir/default.conf" | grep -v "^$" | sed 's/#.*$//' | sed 's/[[:space:]]*$//' | tr '\n' ' ')
             fi
         fi
     fi
