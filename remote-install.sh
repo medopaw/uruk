@@ -196,9 +196,9 @@ EOF
     done
     
     if [ "$has_git" = true ]; then
-        echo "git          # Version control system" >> "$config_file"
+        echo "git" >> "$config_file"
     else
-        echo "# git        # Version control system (not available in this repository)" >> "$config_file"
+        echo "# git" >> "$config_file"
     fi
     
     # Add oh-my-zsh only if it exists as a target
@@ -211,7 +211,7 @@ EOF
     done
     
     if [ "$has_oh_my_zsh" = true ]; then
-        echo "oh-my-zsh    # Zsh configuration framework" >> "$config_file"
+        echo "oh-my-zsh" >> "$config_file"
     fi
     
     echo >> "$config_file"
@@ -233,7 +233,7 @@ EOF
             unset IFS
             
             for target in "${sorted_brew[@]}"; do
-                printf "# %-12s # %s\n" "$target" "$(get_target_description "$target" "brew")" >> "$config_file"
+                printf "# %s\n" "$target" >> "$config_file"
             done
         fi
         echo >> "$config_file"
@@ -246,7 +246,7 @@ EOF
         unset IFS
         
         for target in "${sorted_cask[@]}"; do
-            printf "# %-12s # %s\n" "$target" "$(get_target_description "$target" "cask")" >> "$config_file"
+            printf "# %s\n" "$target" >> "$config_file"
         done
         echo >> "$config_file"
     fi
@@ -258,11 +258,7 @@ EOF
         unset IFS
         
         for target in "${sorted_mas[@]}"; do
-            local mas_id=""
-            if [ -f "$targets_dir/$target.mastarget" ]; then
-                mas_id=" (MAS ID: $(tr -d '\n\r' < "$targets_dir/$target.mastarget" 2>/dev/null || echo "unknown"))"
-            fi
-            printf "# %-12s # %s%s\n" "$target" "$(get_target_description "$target" "mas")" "$mas_id" >> "$config_file"
+            printf "# %s\n" "$target" >> "$config_file"
         done
         echo >> "$config_file"
     fi
@@ -274,7 +270,7 @@ EOF
         unset IFS
         
         for target in "${sorted_cargo[@]}"; do
-            printf "# %-12s # %s\n" "$target" "$(get_target_description "$target" "cargo")" >> "$config_file"
+            printf "# %s\n" "$target" >> "$config_file"
         done
         echo >> "$config_file"
     fi
@@ -296,7 +292,7 @@ EOF
             unset IFS
             
             for target in "${sorted_script[@]}"; do
-                printf "# %-12s # %s\n" "$target" "$(get_target_description "$target" "script")" >> "$config_file"
+                printf "# %s\n" "$target" >> "$config_file"
             done
         fi
         echo >> "$config_file"
