@@ -370,14 +370,20 @@ open_editor() {
         
         # Open editor with TTY redirection but don't use exec (which replaces the process)
         if [ -e /dev/tty ]; then
-            "$editor" "$file" < /dev/tty > /dev/tty 2>&1
+            "$editor" "$file" < /dev/tty > /dev/tty 2>&1 || {
+                echo "⚠️ Editor exited with non-zero status, but continuing..."
+            }
         else
-            "$editor" "$file"
+            "$editor" "$file" || {
+                echo "⚠️ Editor exited with non-zero status, but continuing..."
+            }
         fi
     else
         read -p "Press Enter to open the editor..." -r
         # Open the editor normally
-        "$editor" "$file"
+        "$editor" "$file" || {
+            echo "⚠️ Editor exited with non-zero status, but continuing..."
+        }
     fi
     
     # Verify the editor was used (file was modified)
@@ -388,6 +394,12 @@ open_editor() {
     
     echo ""
     echo "✅ Configuration saved. Proceeding with installation..."
+    echo "🔍 Debug: Current directory is $(pwd)"
+    echo "🔍 Debug: Config file path is $file"
+    echo "🔍 Debug: Config file exists: $([ -f "$file" ] && echo "yes" || echo "no")"
+    if [ -f "$file" ]; then
+        echo "🔍 Debug: Config file size: $(wc -l < "$file") lines"
+    fi
     # Stay in uruk directory for the installation
 }
 
@@ -426,8 +438,18 @@ main() {
     # Let user edit configuration
     open_editor "$config_file" "$URUK_DIR"
     
+    echo "🔍 Debug: Returned from open_editor function"
+    echo "🔍 Debug: Current directory after editor: $(pwd)"
+    
     # Verify configuration
+    echo "🔍 Debug: About to check configuration file: $config_file"
+    if [ ! -f "$config_file" ]; then
+        error "Configuration file not found: $config_file"
+    fi
+    
     local enabled_count=$(grep -v "^#" "$config_file" | grep -v "^$" | wc -l | tr -d ' ')
+    echo "🔍 Debug: Enabled count: '$enabled_count'"
+    
     if [ "$enabled_count" -eq 0 ]; then
         error "No tools selected for installation. Aborting."
     fi
