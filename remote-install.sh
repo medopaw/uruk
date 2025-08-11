@@ -196,9 +196,9 @@ EOF
     done
     
     if [ "$has_git" = true ]; then
-        echo "git" >> "$config_file"
+        echo "git          # Version control system" >> "$config_file"
     else
-        echo "# git" >> "$config_file"
+        echo "# git        # Version control system (not available in this repository)" >> "$config_file"
     fi
     
     # Add oh-my-zsh only if it exists as a target
@@ -211,7 +211,7 @@ EOF
     done
     
     if [ "$has_oh_my_zsh" = true ]; then
-        echo "oh-my-zsh" >> "$config_file"
+        echo "oh-my-zsh    # Zsh configuration framework" >> "$config_file"
     fi
     
     echo >> "$config_file"
@@ -233,7 +233,7 @@ EOF
             unset IFS
             
             for target in "${sorted_brew[@]}"; do
-                printf "# %s\n" "$target" >> "$config_file"
+                printf "# %-12s # %s\n" "$target" "$(get_target_description "$target" "brew")" >> "$config_file"
             done
         fi
         echo >> "$config_file"
@@ -246,7 +246,7 @@ EOF
         unset IFS
         
         for target in "${sorted_cask[@]}"; do
-            printf "# %s\n" "$target" >> "$config_file"
+            printf "# %-12s # %s\n" "$target" "$(get_target_description "$target" "cask")" >> "$config_file"
         done
         echo >> "$config_file"
     fi
@@ -258,7 +258,11 @@ EOF
         unset IFS
         
         for target in "${sorted_mas[@]}"; do
-            printf "# %s\n" "$target" >> "$config_file"
+            local mas_id=""
+            if [ -f "$targets_dir/$target.mastarget" ]; then
+                mas_id=" (MAS ID: $(tr -d '\n\r' < "$targets_dir/$target.mastarget" 2>/dev/null || echo "unknown"))"
+            fi
+            printf "# %-12s # %s%s\n" "$target" "$(get_target_description "$target" "mas")" "$mas_id" >> "$config_file"
         done
         echo >> "$config_file"
     fi
@@ -270,7 +274,7 @@ EOF
         unset IFS
         
         for target in "${sorted_cargo[@]}"; do
-            printf "# %s\n" "$target" >> "$config_file"
+            printf "# %-12s # %s\n" "$target" "$(get_target_description "$target" "cargo")" >> "$config_file"
         done
         echo >> "$config_file"
     fi
@@ -292,7 +296,7 @@ EOF
             unset IFS
             
             for target in "${sorted_script[@]}"; do
-                printf "# %s\n" "$target" >> "$config_file"
+                printf "# %-12s # %s\n" "$target" "$(get_target_description "$target" "script")" >> "$config_file"
             done
         fi
         echo >> "$config_file"
@@ -516,7 +520,12 @@ main() {
     echo "🔍 Debug: About to execute: ./install.sh"
     echo "🔍 Debug: install.sh will look for root_dir at: $(dirname "$(realpath "./install.sh")" 2>/dev/null || dirname "$(pwd)/install.sh")"
     
-    if ./install.sh; then
+    # Extract clean target list from config file (remove comments and empty lines)
+    local clean_targets
+    clean_targets=$(grep -v "^#" "$config_file" | grep -v "^$" | sed 's/#.*$//' | sed 's/[[:space:]]*$//' | tr '\n' ' ')
+    echo "🔍 Debug: Clean targets to install: '$clean_targets'"
+    
+    if ./install.sh $clean_targets; then
         success "Installation completed successfully!"
         echo ""
         echo "🎉 Welcome to your newly configured development environment!"
