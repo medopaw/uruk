@@ -494,12 +494,21 @@ main() {
     # Run installation (we should already be in URUK_DIR after open_editor)
     log "Starting installation..."
     
+    echo "🔍 Debug: Current directory before installation: $(pwd)"
+    echo "🔍 Debug: Listing current directory contents:"
+    ls -la
+    echo "🔍 Debug: Checking for install.sh: $([ -f "install.sh" ] && echo "found" || echo "not found")"
+    echo "🔍 Debug: Checking for targets dir: $([ -d "targets" ] && echo "found" || echo "not found")"
+    
     # Verify we're in the right directory
     if [ ! -f "install.sh" ] || [ ! -d "targets" ]; then
-        # If not, try to change to the correct directory
+        echo "🔍 Debug: Missing files, trying to change to correct directory: $URUK_DIR"
         if ! cd "$URUK_DIR" 2>/dev/null; then
             error "Failed to enter Uruk directory: $URUK_DIR"
         fi
+        echo "🔍 Debug: After cd, current directory: $(pwd)"
+        echo "🔍 Debug: After cd, listing contents:"
+        ls -la
     fi
     
     if [ ! -f "install.sh" ]; then
@@ -507,6 +516,9 @@ main() {
     fi
     
     chmod +x install.sh || error "Failed to make install.sh executable"
+    
+    echo "🔍 Debug: About to execute: ./install.sh"
+    echo "🔍 Debug: install.sh will look for root_dir at: $(dirname "$(realpath "./install.sh")" 2>/dev/null || dirname "$(pwd)/install.sh")"
     
     if ./install.sh; then
         success "Installation completed successfully!"
