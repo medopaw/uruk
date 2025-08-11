@@ -312,11 +312,8 @@ EOF
     fi
 }
 
-open_editor() {
-    local file="$1"
-    local uruk_dir="$2"  # Pass the uruk directory as parameter
+determine_editor() {
     local editor="${EDITOR:-}"
-    local original_pwd="$(pwd)"
     
     # Determine the best available editor
     if [ -z "$editor" ]; then
@@ -356,6 +353,18 @@ open_editor() {
             done
         fi
     fi
+    
+    echo "$editor"
+}
+
+open_editor() {
+    local file="$1"
+    local uruk_dir="$2"  # Pass the uruk directory as parameter
+    local original_pwd="$(pwd)"
+    
+    # Determine the editor to use
+    local editor
+    editor=$(determine_editor)
     
     log "Opening $editor to edit configuration..."
     echo "📝 Please edit the configuration file to select which tools to install."
@@ -443,6 +452,10 @@ main() {
     generate_config "$URUK_DIR/targets" "$config_file"
     
     success "Found $(wc -l < "$config_file" | tr -d ' ') configuration options"
+    
+    # Determine which editor will be used
+    local selected_editor
+    selected_editor=$(determine_editor)
     
     # Let user edit configuration
     open_editor "$config_file" "$URUK_DIR"
@@ -547,7 +560,7 @@ main() {
         echo "📁 Uruk directory: $URUK_DIR"
         echo "🔧 To install more tools:"
         echo "   cd $URUK_DIR"
-        echo "   nano custom.conf  # Edit configuration"
+        echo "   $selected_editor custom.conf  # Edit configuration"
         echo "   ./install.sh      # Run installation again"
         echo ""
         echo "🗑️  The temporary directory will be cleaned up automatically by the system."
@@ -558,7 +571,7 @@ main() {
         echo ""
         echo "💡 To retry installation or debug:"
         echo "   cd $URUK_DIR"
-        echo "   nano custom.conf  # Edit configuration"
+        echo "   $selected_editor custom.conf  # Edit configuration"
         echo "   ./install.sh      # Run installation again"
         error "Installation failed. Please check the output above for details."
     fi
