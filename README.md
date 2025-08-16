@@ -223,7 +223,6 @@ chmod +x install.sh
 
 ## Supported Installation Targets
 
-
 1. alfred
 2. autojump
 3. baiduinput

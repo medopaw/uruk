@@ -157,7 +157,6 @@ update_readme() {
             # Found the section header
             echo "$line" >> "$temp_file"
             echo "" >> "$temp_file"
-            echo "" >> "$temp_file"
             
             # Write all targets with proper numbering
             for i in "${!targets_array[@]}"; do
