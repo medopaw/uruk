@@ -175,10 +175,11 @@ chmod +x install.sh
 49. switchhosts
 50. tig
 51. tldr
-52. visual-studio-code
-53. wechat
-54. xcode-command-line-tools
-55. zed
+52. vim
+53. visual-studio-code
+54. wechat
+55. xcode-command-line-tools
+56. zed
 
 All depended targets will be installed first. The dependency is specified in installation scripts by calling `install_if_needed`. You can modify installation script to customize your own installation.
 
