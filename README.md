@@ -69,6 +69,92 @@ If a popup update window appears and ask you to install xcode-select command lin
 
 By default, this will install git (brew version) and rust if nothing modified.
 
+## Available Commands
+
+Uruk provides several commands to help you manage installation targets. You can use either `make` commands or run the shell scripts directly.
+
+### Get Help
+
+Show all available commands and usage information:
+
+```bash
+make help
+# or run make without arguments
+make
+```
+
+### Install Tools
+
+Install all tools specified in configuration files:
+
+```bash
+make install
+# Alternative: run install.sh directly
+chmod +x install.sh
+./install.sh
+```
+
+### Manage Installation Targets
+
+Add a new installation target interactively:
+
+```bash
+make add-target
+# Alternative: run add-target.sh directly
+chmod +x add-target.sh
+./add-target.sh
+```
+
+Add a new target with a specific name (will prompt for type and other details):
+
+```bash
+make add-target vim
+# Alternative: run add-target.sh directly
+chmod +x add-target.sh
+./add-target.sh vim
+```
+
+### List Targets
+
+Show all available installation targets:
+
+```bash
+make list-targets
+# Alternative: run list-targets.sh directly
+chmod +x list-targets.sh
+./list-targets.sh
+```
+
+Show currently installed targets:
+
+```bash
+make list-installed
+# Alternative: run list-installed.sh directly
+chmod +x list-installed.sh
+./list-installed.sh
+```
+
+Show targets that are not installed:
+
+```bash
+make list-uninstalled
+# Alternative: run list-uninstalled.sh directly
+chmod +x list-uninstalled.sh
+./list-uninstalled.sh
+```
+
+All listing commands support a `--simple` flag for script-friendly output:
+
+```bash
+make list-targets ARGS="--simple"
+make list-installed ARGS="--simple"
+make list-uninstalled ARGS="--simple"
+# Alternative: run scripts directly
+./list-targets.sh --simple
+./list-installed.sh --simple
+./list-uninstalled.sh --simple
+```
+
 ## Customization
 
 ### .conf files
@@ -104,6 +190,18 @@ and both python and ruby will be installed.
 
 If no `custom.conf` was found, Uruk will read from `default.conf`.
 
+### Adding New Targets
+
+You can add new installation targets using the `make add-target` command. This will interactively guide you through creating the necessary files for a new target:
+
+```bash
+make add-target
+# or with a specific name
+make add-target newtool
+```
+
+This automatically updates the README with the new target in the supported targets list.
+
 ### Check if already installed differently
 
 Uruk use `command -v` to check if a target is installed. You can specify different checking method in `is_installed.sh` in the folder with target name.
@@ -112,11 +210,13 @@ The status code explicitly or implicitly returned from `is_installed` will be us
 
 Often a customized `is_installed` is needed if you want to use `brew` or other installed version instead of system default version.
 
-### Run install.sh directly
+### Command-line Installation
 
-Though not recommended, you can also run `install.sh` and specify things to install in command-line.
+You can also specify targets to install directly in the command-line:
 
 ```bash
+make install python ruby
+# Alternative: run install.sh directly
 chmod +x install.sh
 ./install.sh python ruby
 ```
