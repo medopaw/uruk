@@ -2,8 +2,8 @@
 
 # Source shared functions
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
-if [ ! -r "$SCRIPT_DIR/functions.sh" ]; then
-    echo "Error: functions.sh not found. Please run from the Uruk directory." >&2
+if [ ! -r "$SCRIPT_DIR/lib/functions.sh" ]; then
+    echo "Error: lib/functions.sh not found. Please run from the Uruk directory." >&2
     exit 1
 fi
 
@@ -11,7 +11,7 @@ fi
 root_dir="$SCRIPT_DIR"
 
 # Source the shared functions
-. "$SCRIPT_DIR/functions.sh"
+. "$SCRIPT_DIR/lib/functions.sh"
 
 install_all() {
     all_targets=$*

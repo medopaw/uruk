@@ -22,8 +22,8 @@ usage() {
 }
 
 # Source the shared functions
-if [[ ! -r "$SCRIPT_DIR/functions.sh" ]]; then
-    echo "Error: functions.sh not found. Please run from the Uruk directory." >&2
+if [[ ! -r "$SCRIPT_DIR/lib/functions.sh" ]]; then
+    echo "Error: lib/functions.sh not found. Please run from the Uruk directory." >&2
     exit 1
 fi
 
@@ -32,7 +32,7 @@ root_dir="$SCRIPT_DIR"
 anything_installed=false
 silent_if_possible=true  # We don't want installation messages during checks
 
-source "$SCRIPT_DIR/functions.sh"
+source "$SCRIPT_DIR/lib/functions.sh"
 
 # Main function
 main() {
