@@ -273,21 +273,20 @@ chmod +x install.sh
 48. quickmail
 49. ranger
 50. rbenv
-51. retry
-52. rg
-53. rsync
-54. ruby
-55. rust
-56. sogouinput
-57. sublime-text
-58. switchhosts
-59. tig
-60. tldr
-61. vim
-62. visual-studio-code
-63. wechat
-64. xcode-command-line-tools
-65. zed
+51. rg
+52. rsync
+53. ruby
+54. rust
+55. sogouinput
+56. sublime-text
+57. switchhosts
+58. tig
+59. tldr
+60. vim
+61. visual-studio-code
+62. wechat
+63. xcode-command-line-tools
+64. zed
 
 All depended targets will be installed first. The dependency is specified in installation scripts by calling `install_if_needed`. You can modify installation script to customize your own installation.
 
