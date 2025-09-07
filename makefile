@@ -10,6 +10,8 @@ help:
 	@echo "  make install           Install all tools specified in config files"
 	@echo "  make add-target        Add a new installation target interactively"
 	@echo "  make add-target <name> Add a new target with the specified name"
+	@echo "  make edit-config       Edit configuration file (creates custom.conf if needed)"
+	@echo "  make edit-config <editor> Edit config with specified editor (e.g. code, zed, nano)"
 	@echo "  make format-config     Format custom.conf with default.conf structure"
 	@echo ""
 	@echo "  make list-targets      Show all available installation targets"
@@ -30,6 +32,14 @@ add-target:
 		./add-target.sh $(filter-out $@,$(MAKECMDGOALS)); \
 	else \
 		./add-target.sh; \
+	fi
+
+edit-config:
+	chmod +x edit-config.sh
+	@if [ "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
+		./edit-config.sh $(filter-out $@,$(MAKECMDGOALS)); \
+	else \
+		./edit-config.sh; \
 	fi
 
 format-config:

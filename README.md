@@ -114,6 +114,32 @@ chmod +x add-target.sh
 ./add-target.sh vim
 ```
 
+### Edit Configuration
+
+Edit configuration file (creates custom.conf from default.conf if it doesn't exist):
+
+```bash
+make edit-config
+# Or specify a specific editor
+make edit-config code
+make edit-config zed
+make edit-config nano
+
+# Alternative: run edit-config.sh directly
+chmod +x edit-config.sh
+./edit-config.sh
+# Or with specific editor
+./edit-config.sh code
+```
+
+This command will:
+- Open `custom.conf` for editing if it exists
+- Copy `default.conf` to `custom.conf` and then open it if `custom.conf` doesn't exist
+- Use the specified editor if provided as an argument
+- Use the `$EDITOR` environment variable if set and no editor specified
+- If `$EDITOR` is not set, automatically detect and use `nano` or `vi`
+- If both `nano` and `vi` are available, present a selection menu
+
 ### List Targets
 
 Show all available installation targets:
