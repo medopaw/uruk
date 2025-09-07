@@ -10,6 +10,7 @@ help:
 	@echo "  make install           Install all tools specified in config files"
 	@echo "  make add-target        Add a new installation target interactively"
 	@echo "  make add-target <name> Add a new target with the specified name"
+	@echo "  make format-config     Format custom.conf with default.conf structure"
 	@echo ""
 	@echo "  make list-targets      Show all available installation targets"
 	@echo "  make list-installed    Show currently installed targets"
@@ -30,6 +31,10 @@ add-target:
 	else \
 		./add-target.sh; \
 	fi
+
+format-config:
+	chmod +x format-config.sh
+	./format-config.sh
 
 list-targets:
 	chmod +x list-targets.sh

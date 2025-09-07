@@ -11,5 +11,6 @@
 
 # Custom Configuration
 custom.conf
+custom.backup.conf
 .aider*
 .claude/

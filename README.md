@@ -143,6 +143,17 @@ chmod +x list-uninstalled.sh
 ./list-uninstalled.sh
 ```
 
+### Format Configuration
+
+Format custom.conf with default.conf structure:
+
+```bash
+make format-config
+# Alternative: run format-config.sh directly
+chmod +x format-config.sh
+./format-config.sh
+```
+
 All listing commands support a `--simple` flag for script-friendly output:
 
 ```bash
