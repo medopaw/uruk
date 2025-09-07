@@ -274,10 +274,10 @@ update_default_conf() {
     local target_name="$1"
     local target_type="$2"
     echo "Adding '$target_name' to default.conf..."
-    if [[ -x "$SCRIPT_DIR/add-target-to-default-conf.sh" ]]; then
-        "$SCRIPT_DIR/add-target-to-default-conf.sh" "$target_name" "$target_type"
+    if [[ -x "$SCRIPT_DIR/lib/add-target-to-default-conf.sh" ]]; then
+        "$SCRIPT_DIR/lib/add-target-to-default-conf.sh" "$target_name" "$target_type"
     else
-        echo "⚠️  Warning: add-target-to-default-conf.sh not found or not executable"
+        echo "⚠️  Warning: lib/add-target-to-default-conf.sh not found or not executable"
     fi
 }
 

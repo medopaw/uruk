@@ -6,8 +6,9 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TARGETS_DIR="$SCRIPT_DIR/targets"
-DEFAULT_CONF="$SCRIPT_DIR/default.conf"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+TARGETS_DIR="$ROOT_DIR/targets"
+DEFAULT_CONF="$ROOT_DIR/default.conf"
 
 if [[ $# -ne 2 ]]; then
     echo "Usage: $0 <target_name> <target_type>"
