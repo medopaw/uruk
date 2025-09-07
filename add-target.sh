@@ -45,14 +45,22 @@ semi_interactive_mode() {
     
     # Get target type
     local type=""
-    while true; do
-        read -p "Select target type (1-${#TARGET_TYPES[@]}): " choice
-        if [[ "$choice" =~ ^[1-9]$ ]] && [[ "$choice" -le "${#TARGET_TYPES[@]}" ]]; then
-            type="${TARGET_TYPES[$((choice-1))]}"
-            break
-        else
-            echo "Invalid choice. Please enter a number between 1 and ${#TARGET_TYPES[@]}."
-        fi
+    local PS3="Select target type: "
+    
+    select choice in "${TARGET_TYPES[@]}"; do
+        case $REPLY in
+            [1-5])
+                if [[ "$REPLY" -le "${#TARGET_TYPES[@]}" ]]; then
+                    type="${TARGET_TYPES[$((REPLY-1))]}"
+                    break
+                else
+                    echo "Invalid choice, please try again."
+                fi
+                ;;
+            *)
+                echo "Invalid choice, please try again."
+                ;;
+        esac
     done
     
     # Get additional info if needed
@@ -60,7 +68,8 @@ semi_interactive_mode() {
     case "$type" in
         mastarget)
             while true; do
-                read -p "Enter Mac App Store ID: " mas_id
+                echo "Enter Mac App Store ID:"
+                read mas_id
                 if [[ "$mas_id" =~ ^[0-9]+$ ]]; then
                     content="$mas_id"
                     break
@@ -205,19 +214,28 @@ interactive_mode() {
     echo ""
     
     # Get target type
-    while true; do
-        read -p "Select target type (1-${#TARGET_TYPES[@]}): " choice
-        if [[ "$choice" =~ ^[1-9]$ ]] && [[ "$choice" -le "${#TARGET_TYPES[@]}" ]]; then
-            type="${TARGET_TYPES[$((choice-1))]}"
-            break
-        else
-            echo "Invalid choice. Please enter a number between 1 and ${#TARGET_TYPES[@]}."
-        fi
+    local PS3="Select target type: "
+    
+    select choice in "${TARGET_TYPES[@]}"; do
+        case $REPLY in
+            [1-5])
+                if [[ "$REPLY" -le "${#TARGET_TYPES[@]}" ]]; then
+                    type="${TARGET_TYPES[$((REPLY-1))]}"
+                    break
+                else
+                    echo "Invalid choice, please try again."
+                fi
+                ;;
+            *)
+                echo "Invalid choice, please try again."
+                ;;
+        esac
     done
     
     # Get target name
     while true; do
-        read -p "Enter target name: " name
+        echo "Enter target name:"
+        read name
         if [[ -n "$name" ]]; then
             validate_target_name "$name"
             check_existing_target "$name"
@@ -232,7 +250,8 @@ interactive_mode() {
     case "$type" in
         mastarget)
             while true; do
-                read -p "Enter Mac App Store ID: " mas_id
+                echo "Enter Mac App Store ID:"
+                read mas_id
                 if [[ "$mas_id" =~ ^[0-9]+$ ]]; then
                     content="$mas_id"
                     break

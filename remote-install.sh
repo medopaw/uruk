@@ -342,14 +342,22 @@ determine_editor() {
             done
             echo ""
             
-            while true; do
-                read -p "Select editor (1-${#available_editors[@]}): " -r choice
-                if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le ${#available_editors[@]} ]; then
-                    editor="${available_editors[$((choice-1))]}"
-                    break
-                else
-                    echo "❌ Invalid choice. Please enter a number between 1 and ${#available_editors[@]}."
-                fi
+            local PS3="Select editor: "
+            
+            select choice in "${editor_names[@]}"; do
+                case $REPLY in
+                    [1-9])
+                        if [ "$REPLY" -ge 1 ] && [ "$REPLY" -le ${#available_editors[@]} ]; then
+                            editor="${available_editors[$((REPLY-1))]}"
+                            break
+                        else
+                            echo "❌ Invalid choice, please try again."
+                        fi
+                        ;;
+                    *)
+                        echo "❌ Invalid choice, please try again."
+                        ;;
+                esac
             done
         fi
     fi
@@ -397,7 +405,8 @@ open_editor() {
             }
         fi
     else
-        read -p "Press Enter to open the editor..." -r
+        echo "Press Enter to open the editor..."
+        read -r
         # Open the editor normally
         "$editor" "$file" || {
             echo "⚠️ Editor exited with non-zero status, but continuing..."
@@ -493,7 +502,8 @@ main() {
     # Confirm installation
     if [ -t 0 ]; then
         # Interactive mode - ask for confirmation
-        read -p "🤔 Do you want to proceed with installation? (y/N): " -r reply
+        echo "🤔 Do you want to proceed with installation? (y/N): "
+        read -r reply
         if [[ ! "$reply" =~ ^[Yy]$ ]]; then
             log "Installation cancelled by user"
             exit 0
