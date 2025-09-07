@@ -75,6 +75,7 @@ semi_interactive_mode() {
     echo "Creating target: $name ($type)"
     create_target_file "$type" "$name" "$content"
     update_readme "$name"
+    update_default_conf "$name" "$type"
     echo "✅ Target '$name' added successfully!"
 }
 
@@ -246,7 +247,19 @@ interactive_mode() {
     echo "Creating target: $name ($type)"
     create_target_file "$type" "$name" "$content"
     update_readme "$name"
+    update_default_conf "$name" "$type"
     echo "✅ Target '$name' added successfully!"
+}
+
+update_default_conf() {
+    local target_name="$1"
+    local target_type="$2"
+    echo "Adding '$target_name' to default.conf..."
+    if [[ -x "$SCRIPT_DIR/add-target-to-default-conf.sh" ]]; then
+        "$SCRIPT_DIR/add-target-to-default-conf.sh" "$target_name" "$target_type"
+    else
+        echo "⚠️  Warning: add-target-to-default-conf.sh not found or not executable"
+    fi
 }
 
 main() {
