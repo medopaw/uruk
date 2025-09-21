@@ -331,7 +331,8 @@ chmod +x install.sh
 69. wechat
 70. windows-app
 71. xcode-command-line-tools
-72. zed
+72. xnviewmp
+73. zed
 
 All depended targets will be installed first. The dependency is specified in installation scripts by calling `install_if_needed`. You can modify installation script to customize your own installation.
 
