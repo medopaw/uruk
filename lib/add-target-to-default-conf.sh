@@ -12,7 +12,7 @@ DEFAULT_CONF="$ROOT_DIR/default.conf"
 
 if [[ $# -ne 2 ]]; then
     echo "Usage: $0 <target_name> <target_type>"
-    echo "target_type: brewtarget, casktarget, mastarget, cargotarget, custom"
+    echo "target_type: brewtarget, casktarget, mastarget, cargotarget, misetarget, custom"
     exit 1
 fi
 
@@ -64,6 +64,9 @@ get_target_description() {
                 description="Rust cargo package"
             fi
             ;;
+        misetarget)
+            description="Mise package"
+            ;;
         custom)
             description="Custom installation script"
             ;;
@@ -110,6 +113,9 @@ get_category() {
             ;;
         cargotarget)
             echo "Cargo Packages"
+            ;;
+        misetarget)
+            echo "Mise Packages"
             ;;
         custom)
             echo "Where should '$name' ($type) be categorized?"
@@ -175,6 +181,9 @@ get_category_and_add_target() {
             ;;
         cargotarget)
             category="Cargo Packages"
+            ;;
+        misetarget)
+            category="Mise Packages"
             ;;
         custom)
             echo "Where should '$name' ($type) be categorized?"
@@ -263,11 +272,11 @@ add_target_to_section() {
 main() {
     # Validate target type
     case "$TARGET_TYPE" in
-        brewtarget|casktarget|mastarget|cargotarget|custom)
+        brewtarget|casktarget|mastarget|cargotarget|misetarget|custom)
             ;;
         *)
             echo "Error: Invalid target type '$TARGET_TYPE'"
-            echo "Valid types: brewtarget, casktarget, mastarget, cargotarget, custom"
+            echo "Valid types: brewtarget, casktarget, mastarget, cargotarget, misetarget, custom"
             exit 1
             ;;
     esac

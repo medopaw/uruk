@@ -2,7 +2,7 @@
 
 set -e
 
-TARGET_TYPES=("brewtarget" "casktarget" "mastarget" "cargotarget" "custom")
+TARGET_TYPES=("brewtarget" "casktarget" "mastarget" "cargotarget" "misetarget" "custom")
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGETS_DIR="$SCRIPT_DIR/targets"
 README_FILE="$SCRIPT_DIR/README.md"
@@ -16,9 +16,10 @@ usage() {
     echo ""
     echo "Target types:"
     echo "  brewtarget  - Homebrew package"
-    echo "  casktarget  - Homebrew cask application" 
+    echo "  casktarget  - Homebrew cask application"
     echo "  mastarget   - Mac App Store application (requires MAS ID)"
     echo "  cargotarget - Rust cargo package"
+    echo "  misetarget  - Mise package"
     echo "  custom      - Custom installation script"
 }
 
@@ -37,6 +38,7 @@ semi_interactive_mode() {
             casktarget) desc="Homebrew cask application" ;;
             mastarget) desc="Mac App Store application" ;;
             cargotarget) desc="Rust cargo package" ;;
+            misetarget) desc="Mise package" ;;
             custom) desc="Custom installation script" ;;
         esac
         echo "  $((i+1)). ${TARGET_TYPES[$i]} - $desc"
@@ -98,15 +100,15 @@ validate_target_name() {
 
 check_existing_target() {
     local name="$1"
-    
+
     # Check all possible target file formats
-    for ext in brewtarget casktarget mastarget cargotarget sh; do
+    for ext in brewtarget casktarget mastarget cargotarget misetarget sh; do
         if [[ -f "$TARGETS_DIR/$name.$ext" ]]; then
             echo "Error: Target '$name' already exists as $name.$ext"
             exit 1
         fi
     done
-    
+
     # Check for directory-based targets
     if [[ -d "$TARGETS_DIR/$name" ]]; then
         echo "Error: Target directory '$name' already exists"
@@ -118,9 +120,9 @@ create_target_file() {
     local type="$1"
     local name="$2"
     local content="$3"
-    
+
     case "$type" in
-        brewtarget|casktarget|cargotarget)
+        brewtarget|casktarget|cargotarget|misetarget)
             # Create empty marker file
             touch "$TARGETS_DIR/$name.$type"
             ;;
@@ -207,6 +209,7 @@ interactive_mode() {
             casktarget) desc="Homebrew cask application" ;;
             mastarget) desc="Mac App Store application" ;;
             cargotarget) desc="Rust cargo package" ;;
+            misetarget) desc="Mise package" ;;
             custom) desc="Custom installation script" ;;
         esac
         echo "  $((i+1)). ${TARGET_TYPES[$i]} - $desc"

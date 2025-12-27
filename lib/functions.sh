@@ -103,6 +103,14 @@ is_cargo_target() {
     fi
 }
 
+is_mise_target() {
+    if [ -r "$root_dir/targets/$1.misetarget" ]; then
+        true
+    else
+        false
+    fi
+}
+
 # Installation status check functions
 is_installed_by_brew() {
     install_if_needed brew
@@ -128,6 +136,11 @@ is_installed_by_mas() {
 is_installed_by_cargo() {
     install_if_needed cargo
     cargo install --list | grep -q "^$1 "
+}
+
+is_installed_by_mise() {
+    install_if_needed mise
+    mise list "$1" 2>/dev/null | grep -q "^$1"
 }
 
 # Installation functions
@@ -157,6 +170,11 @@ install_with_cargo() {
     cargo install "$1"
 }
 
+install_with_mise() {
+    install_if_needed mise
+    mise use -g "$1@latest"
+}
+
 # Main installation check function
 is_installed() {
     # Check if `is_installed.sh` exists
@@ -184,6 +202,11 @@ is_installed() {
     # Check if is cargo target
     if is_cargo_target "$1"; then
         is_installed_by_cargo "$1"
+        return
+    fi
+    # Check if is mise target
+    if is_mise_target "$1"; then
+        is_installed_by_mise "$1"
         return
     fi
     # Check if command exists
@@ -248,6 +271,12 @@ install_one() {
         install_with_cargo "$1" || exit # Exit on installation error
         return
     fi
+    # Check if is mise target
+    if is_mise_target "$1"; then
+        echo Installing "$1"...
+        install_with_mise "$1" || exit # Exit on installation error
+        return
+    fi
     cat <<EOS
 Error: You need to specify the way to install target $1
 
@@ -258,6 +287,7 @@ You can do any of the following:
 4. Create $root_dir/targets/$1.casktarget with empty content if it's a brew cask app.
 5. Create $root_dir/targets/$1.mastarget with Mac App Store ID if it's a MAS app.
 6. Create $root_dir/targets/$1.cargotarget with empty content if it's a cargo package.
+7. Create $root_dir/targets/$1.misetarget with empty content if it's a mise package.
 EOS
     return 1 # Can't install. Need to stop.
 }

@@ -34,7 +34,8 @@ get_target_type() {
     # 4. targets/name.casktarget
     # 5. targets/name.mastarget
     # 6. targets/name.cargotarget
-    
+    # 7. targets/name.misetarget
+
     if [[ -r "$TARGETS_DIR/$name/install.sh" ]]; then
         echo "custom"
     elif [[ -r "$TARGETS_DIR/$name.sh" ]]; then
@@ -47,6 +48,8 @@ get_target_type() {
         echo "mastarget"
     elif [[ -r "$TARGETS_DIR/$name.cargotarget" ]]; then
         echo "cargotarget"
+    elif [[ -r "$TARGETS_DIR/$name.misetarget" ]]; then
+        echo "misetarget"
     else
         echo "unknown"
     fi
@@ -60,6 +63,7 @@ get_type_description() {
         casktarget) echo "Homebrew cask application" ;;
         mastarget) echo "Mac App Store application" ;;
         cargotarget) echo "Rust cargo package" ;;
+        misetarget) echo "Mise package" ;;
         custom) echo "Custom installation script" ;;
         *) echo "Unknown type" ;;
     esac
@@ -85,7 +89,7 @@ scan_targets() {
     done
     
     # Scan file-based targets
-    for target_file in "$TARGETS_DIR"/*.{brewtarget,casktarget,mastarget,cargotarget,sh}; do
+    for target_file in "$TARGETS_DIR"/*.{brewtarget,casktarget,mastarget,cargotarget,misetarget,sh}; do
         if [[ -r "$target_file" ]]; then
             local filename=$(basename "$target_file")
             local target_name="${filename%.*}"  # Remove extension
