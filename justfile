@@ -12,6 +12,7 @@ help:
     @echo "Available commands:"
     @echo ""
     @echo "  just install           Install all tools specified in config files"
+    @echo "  just install <targets> Install specific targets (e.g., just install tmux vim)"
     @echo "  just add-target        Add a new installation target interactively"
     @echo "  just add-target <name> Add a new target with the specified name"
     @echo "  just edit-config       Edit configuration file (creates custom.conf if needed)"
@@ -26,10 +27,10 @@ help:
     @echo ""
     @echo "For detailed usage, see README.md"
 
-# Install all tools specified in config files
-install:
+# Install all tools specified in config files, or install specific targets if provided
+install *targets:
     chmod +x install.sh
-    ./install.sh
+    ./install.sh {{targets}}
 
 # Add a new installation target interactively or with specified name
 add-target *args:
