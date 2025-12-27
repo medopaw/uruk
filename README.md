@@ -260,7 +260,7 @@ chmod +x install.sh
 
 ## Supported Installation Targets
 
-1. ai-assistant-cli
+1. aicli
 2. alfred
 3. autojump
 4. baiduinput
@@ -329,13 +329,14 @@ chmod +x install.sh
 67. switchhosts
 68. tig
 69. tldr
-70. vim
-71. visual-studio-code
-72. wechat
-73. windows-app
-74. xcode-command-line-tools
-75. xnviewmp
-76. zed
+70. tmux
+71. vim
+72. visual-studio-code
+73. wechat
+74. windows-app
+75. xcode-command-line-tools
+76. xnviewmp
+77. zed
 
 All depended targets will be installed first. The dependency is specified in installation scripts by calling `install_if_needed`. You can modify installation script to customize your own installation.
 
