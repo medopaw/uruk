@@ -24,7 +24,11 @@ help:
 
 install:
 	chmod +x install.sh
-	./install.sh
+	@if [ "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
+		./install.sh $(filter-out $@,$(MAKECMDGOALS)); \
+	else \
+		./install.sh; \
+	fi
 
 add-target:
 	chmod +x add-target.sh

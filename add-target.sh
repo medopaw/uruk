@@ -51,7 +51,7 @@ semi_interactive_mode() {
     
     select choice in "${TARGET_TYPES[@]}"; do
         case $REPLY in
-            [1-5])
+            [1-9])
                 if [[ "$REPLY" -le "${#TARGET_TYPES[@]}" ]]; then
                     type="${TARGET_TYPES[$((REPLY-1))]}"
                     break
@@ -68,6 +68,18 @@ semi_interactive_mode() {
     # Get additional info if needed
     local content=""
     case "$type" in
+        brewtarget)
+            echo "Enter brew formula name (press Enter to use '$name'):"
+            read formula
+            formula=$(echo "$formula" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+            if [[ -n "$formula" && "$formula" != "$name" ]]; then
+                if [[ "$formula" =~ [[:space:]] ]]; then
+                    echo "Error: Formula name cannot contain whitespace."
+                    exit 1
+                fi
+                content="$formula"
+            fi
+            ;;
         mastarget)
             while true; do
                 echo "Enter Mac App Store ID:"
@@ -122,7 +134,16 @@ create_target_file() {
     local content="$3"
 
     case "$type" in
-        brewtarget|casktarget|cargotarget|misetarget)
+        brewtarget)
+            if [[ -n "$content" ]]; then
+                # Formula name differs from target name (e.g. user/tap/formula)
+                echo "$content" > "$TARGETS_DIR/$name.$type"
+            else
+                # Create empty marker file
+                touch "$TARGETS_DIR/$name.$type"
+            fi
+            ;;
+        casktarget|cargotarget|misetarget)
             # Create empty marker file
             touch "$TARGETS_DIR/$name.$type"
             ;;
@@ -221,7 +242,7 @@ interactive_mode() {
     
     select choice in "${TARGET_TYPES[@]}"; do
         case $REPLY in
-            [1-5])
+            [1-9])
                 if [[ "$REPLY" -le "${#TARGET_TYPES[@]}" ]]; then
                     type="${TARGET_TYPES[$((REPLY-1))]}"
                     break
@@ -251,6 +272,18 @@ interactive_mode() {
     # Get additional info if needed
     content=""
     case "$type" in
+        brewtarget)
+            echo "Enter brew formula name (press Enter to use '$name'):"
+            read formula
+            formula=$(echo "$formula" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+            if [[ -n "$formula" && "$formula" != "$name" ]]; then
+                if [[ "$formula" =~ [[:space:]] ]]; then
+                    echo "Error: Formula name cannot contain whitespace."
+                    exit 1
+                fi
+                content="$formula"
+            fi
+            ;;
         mastarget)
             while true; do
                 echo "Enter Mac App Store ID:"

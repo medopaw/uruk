@@ -70,6 +70,21 @@ get_mas_id() {
     [ -r "$target_file" ] && cat "$target_file" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' || echo ""
 }
 
+# Returns the brew formula for a target: first line of the .brewtarget file
+# (trimmed), or the target name itself when the file is empty/unreadable.
+get_brew_formula() {
+    local target_file="$root_dir/targets/$1.brewtarget"
+    local formula=""
+    if [ -r "$target_file" ]; then
+        formula=$(head -n1 "$target_file" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+    fi
+    if [ -n "$formula" ]; then
+        echo "$formula"
+    else
+        echo "$1"
+    fi
+}
+
 # Target type detection functions
 is_brew_target() {
     if [ -r "$root_dir/targets/$1.brewtarget" ]; then
@@ -114,7 +129,7 @@ is_mise_target() {
 # Installation status check functions
 is_installed_by_brew() {
     install_if_needed brew
-    brew list "$1" &>/dev/null
+    brew list "$(get_brew_formula "$1")" &>/dev/null
 }
 
 is_cask_installed_by_brew() {
@@ -146,7 +161,7 @@ is_installed_by_mise() {
 # Installation functions
 install_with_brew() {
     install_if_needed brew
-    brew install "$1"
+    brew install "$(get_brew_formula "$1")"
 }
 
 install_cask_with_brew() {
@@ -283,7 +298,7 @@ Error: You need to specify the way to install target $1
 You can do any of the following:
 1. Create $root_dir/targets/$1/install.sh and write installation code.
 2. Create $root_dir/targets/$1.sh and write installation code.
-3. Create $root_dir/targets/$1.brewtarget with empty content if it's a brew command line tool.
+3. Create $root_dir/targets/$1.brewtarget (optionally containing the formula name if it differs from the target name, e.g. user/tap/formula) if it's a brew command line tool.
 4. Create $root_dir/targets/$1.casktarget with empty content if it's a brew cask app.
 5. Create $root_dir/targets/$1.mastarget with Mac App Store ID if it's a MAS app.
 6. Create $root_dir/targets/$1.cargotarget with empty content if it's a cargo package.

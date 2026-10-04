@@ -239,6 +239,8 @@ make add-target newtool
 
 This automatically updates the README with the new target in the supported targets list.
 
+For `brewtarget`, you will be asked for the brew formula name: press Enter to use the target name itself, or enter a different formula (e.g. `itchyny/tap/volume`), which will be written into the `.brewtarget` file.
+
 ### Check if already installed differently
 
 Uruk use `command -v` to check if a target is installed. You can specify different checking method in `is_installed.sh` in the folder with target name.
@@ -358,7 +360,7 @@ For every install target (i.e. python, ruby, etc.), Uruk decides which install s
 For each name retrieved in step 1 or 2, Uruk will try to resolve it and run specific script. Let's say the name is "python" --
 
 1. If `targets/python/is_installed.sh` exists, use its returned value (`true` or `0` means installed, otherwise not installed)
-2. If `targets/python.brewtarget` exists, treat it as a brew target and check if `brew list python` has `0` exit code.
+2. If `targets/python.brewtarget` exists, treat it as a brew target and check if `brew list <formula>` has `0` exit code. `<formula>` is the first line of the `.brewtarget` file (trimmed), or the target name itself when the file is empty — useful for formulas like `itchyny/tap/volume` that can't be expressed as a file name.
 3. If `targets/python.casktarget` exists, treat it as a cask target and check if `brew list --cask python` has `0` exit code.
 4. If `targets/python.mastarget` exists, treat it as a Mac App Store target and read MAS ID from it and check if `mas list | grep "^$mas_id"` has `0` exit code.
 5. Run `command -v python` to check if `python` is installed
@@ -368,6 +370,6 @@ For each name retrieved in step 1 or 2, Uruk will try to resolve it and run spec
 1. Uruk will try to run `python/install.sh`.
 2. If `python/install.sh` does not exist, Uruk will try to run `python.sh` under current directory instead.
 3. If `python.sh` does not exist either, a message will appear, telling you Uruk can't locate any install script.
-4. If `targets/python.brewtarget` exists, treat it as a brew target and run `brew install python`.
+4. If `targets/python.brewtarget` exists, treat it as a brew target and run `brew install <formula>` (`<formula>` resolved as described above).
 5. If `targets/python.casktarget` exists, treat it as a cask target and run `brew install python`.
 6. If `targets/python.mastarget` exists, treat it as a Mac App Store target and read MAS ID form it and run `mas install $mas_id`.

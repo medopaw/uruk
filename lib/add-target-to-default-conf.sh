@@ -10,6 +10,10 @@ ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 TARGETS_DIR="$ROOT_DIR/targets"
 DEFAULT_CONF="$ROOT_DIR/default.conf"
 
+# Reuse shared helpers (e.g. get_brew_formula); root_dir must be set before sourcing
+root_dir="$ROOT_DIR"
+. "$SCRIPT_DIR/functions.sh"
+
 if [[ $# -ne 2 ]]; then
     echo "Usage: $0 <target_name> <target_type>"
     echo "target_type: brewtarget, casktarget, mastarget, cargotarget, misetarget, custom"
@@ -28,7 +32,7 @@ get_target_description() {
     case "$type" in
         brewtarget)
             if command -v brew >/dev/null 2>&1; then
-                description=$(brew desc "$name" 2>/dev/null | sed 's/^[^:]*: //' || echo "")
+                description=$(brew desc "$(get_brew_formula "$name")" 2>/dev/null | sed 's/^[^:]*: //' || echo "")
             fi
             if [[ -z "$description" ]]; then
                 description="Homebrew package"
@@ -76,72 +80,6 @@ get_target_description() {
     esac
     
     echo "$description"
-}
-
-# Function to get category with user interaction using select
-get_category() {
-    local name="$1"
-    local type="$2"
-    
-    case "$type" in
-        brewtarget)
-            echo "Where should '$name' ($type) be categorized?"
-            local options=("Essential Tools (Homebrew)" "Development Tools (Homebrew)")
-            local PS3="Select category: "
-            
-            select choice in "${options[@]}"; do
-                case $REPLY in
-                    1) 
-                        echo "Essential Tools (Homebrew)"
-                        break
-                        ;;
-                    2) 
-                        echo "Development Tools (Homebrew)"
-                        break
-                        ;;
-                    *) 
-                        echo "Invalid choice, please try again."
-                        ;;
-                esac
-            done
-            ;;
-        casktarget)
-            echo "Applications (Homebrew Cask)"
-            ;;
-        mastarget)
-            echo "Mac App Store Apps"
-            ;;
-        cargotarget)
-            echo "Cargo Packages"
-            ;;
-        misetarget)
-            echo "Mise Packages"
-            ;;
-        custom)
-            echo "Where should '$name' ($type) be categorized?"
-            local options=("Essential Tools (Custom)" "Custom Installation Scripts")
-            local PS3="Select category: "
-            
-            select choice in "${options[@]}"; do
-                case $REPLY in
-                    1) 
-                        echo "Essential Tools (Custom)"
-                        break
-                        ;;
-                    2) 
-                        echo "Custom Installation Scripts"
-                        break
-                        ;;
-                    *) 
-                        echo "Invalid choice, please try again."
-                        ;;
-                esac
-            done
-            ;;
-        *)
-            echo "Other"
-            ;;
-    esac
 }
 
 # Function that handles category selection and adds target in one step
