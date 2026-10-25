@@ -18,7 +18,7 @@ usage() {
     echo "  brewtarget  - Homebrew package"
     echo "  casktarget  - Homebrew cask application"
     echo "  mastarget   - Mac App Store application (requires MAS ID)"
-    echo "  cargotarget - Rust cargo package"
+    echo "  cargotarget - Rust cargo package (optionally with extra install args, e.g. --locked)"
     echo "  misetarget  - Mise package"
     echo "  custom      - Custom installation script"
 }
@@ -92,6 +92,11 @@ semi_interactive_mode() {
                 fi
             done
             ;;
+        cargotarget)
+            echo "Enter extra cargo install arguments (e.g. --locked, press Enter for none):"
+            read cargo_args
+            content=$(echo "$cargo_args" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+            ;;
     esac
     
     echo ""
@@ -143,9 +148,18 @@ create_target_file() {
                 touch "$TARGETS_DIR/$name.$type"
             fi
             ;;
-        casktarget|cargotarget|misetarget)
+        casktarget|misetarget)
             # Create empty marker file
             touch "$TARGETS_DIR/$name.$type"
+            ;;
+        cargotarget)
+            if [[ -n "$content" ]]; then
+                # Extra arguments for cargo install, e.g. --locked
+                echo "$content" > "$TARGETS_DIR/$name.$type"
+            else
+                # Create empty marker file
+                touch "$TARGETS_DIR/$name.$type"
+            fi
             ;;
         mastarget)
             if [[ -z "$content" ]]; then
@@ -295,6 +309,11 @@ interactive_mode() {
                     echo "Invalid MAS ID. Please enter a numeric ID."
                 fi
             done
+            ;;
+        cargotarget)
+            echo "Enter extra cargo install arguments (e.g. --locked, press Enter for none):"
+            read cargo_args
+            content=$(echo "$cargo_args" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
             ;;
     esac
     

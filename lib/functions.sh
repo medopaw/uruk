@@ -85,6 +85,16 @@ get_brew_formula() {
     fi
 }
 
+# Returns extra arguments for `cargo install` from a target: first line of
+# the .cargotarget file (trimmed), e.g. "--locked". Empty when the file has
+# no content, in which case the command is a plain `cargo install <target>`.
+get_cargo_args() {
+    local target_file="$root_dir/targets/$1.cargotarget"
+    if [ -r "$target_file" ]; then
+        head -n1 "$target_file" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
+    fi
+}
+
 # Target type detection functions
 is_brew_target() {
     if [ -r "$root_dir/targets/$1.brewtarget" ]; then
@@ -182,7 +192,7 @@ install_with_mas() {
 
 install_with_cargo() {
     install_if_needed rust
-    cargo install "$1"
+    cargo install $(get_cargo_args "$1") "$1"
 }
 
 install_with_mise() {
@@ -301,7 +311,7 @@ You can do any of the following:
 3. Create $root_dir/targets/$1.brewtarget (optionally containing the formula name if it differs from the target name, e.g. user/tap/formula) if it's a brew command line tool.
 4. Create $root_dir/targets/$1.casktarget with empty content if it's a brew cask app.
 5. Create $root_dir/targets/$1.mastarget with Mac App Store ID if it's a MAS app.
-6. Create $root_dir/targets/$1.cargotarget with empty content if it's a cargo package.
+6. Create $root_dir/targets/$1.cargotarget if it's a cargo package, optionally containing extra arguments for \`cargo install\` (e.g. --locked).
 7. Create $root_dir/targets/$1.misetarget with empty content if it's a mise package.
 EOS
     return 1 # Can't install. Need to stop.
