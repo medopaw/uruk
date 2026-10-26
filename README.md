@@ -341,6 +341,7 @@ chmod +x install.sh
 77. xcode-command-line-tools
 78. xnviewmp
 79. zed
+80. zoxide
 
 All depended targets will be installed first. The dependency is specified in installation scripts by calling `install_if_needed`. You can modify installation script to customize your own installation.
 
