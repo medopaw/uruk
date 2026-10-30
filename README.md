@@ -338,12 +338,13 @@ chmod +x install.sh
 74. vim
 75. visual-studio-code
 76. volume
-77. wechat
-78. windows-app
-79. xcode-command-line-tools
-80. xnviewmp
-81. zed
-82. zoxide
+77. watch
+78. wechat
+79. windows-app
+80. xcode-command-line-tools
+81. xnviewmp
+82. zed
+83. zoxide
 
 All depended targets will be installed first. The dependency is specified in installation scripts by calling `install_if_needed`. You can modify installation script to customize your own installation.
 
